@@ -1,18 +1,20 @@
 #include <iostream>
+#include <string>
 #include "../nlohmann/json.hpp"
 
+#define my_type double
 
 using json = nlohmann::json;
 
-int readInit();
+int readInit(const std::string path);
 
-int allocateMemory();
+int allocateMemory(my_type** &Matrix_A, my_type* &Matrix_b);
 
-int readData();
+int readData(const std::string path);
 
-int calculations();
+int calculations(my_type** &Matrix_A, my_type* &Matrix_b);
 
-int freeMemory();
+int freeMemory(my_type** &Matrix_A, my_type* &Matrix_b);
 
 
 int main()
