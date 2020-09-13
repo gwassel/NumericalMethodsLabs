@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cmath>
 #include "../nlohmann/json.hpp"
 
 #define my_type double
@@ -14,18 +15,20 @@ int AllocateMemory(my_type** &matrixA, my_type** &matrixQ, my_type** matrixR, my
 
 int ReadData(const std::string fileNameMatrix, const std::string fileNameVector, my_type** &matrixA, my_type* &vectorB, const size_t n); //read matrix and column
 
-int Calculations(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, my_type* &columnX, const size_t n); 
+int Calculations(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, my_type* &columnX, const size_t n); //doesnt work!!!!!!!
 
 int WriteData(std::string fileNameQ, std::string fileNameR, std::string fileNameX, 
         my_type** &matrixQ, my_type** &matrixR, my_type* &vectorX, const size_t n); //write results in output file
 
-
 int FreeMemory(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, my_type* &columnX, const size_t n); 
 
 int MatrixMult(my_type** &matrixA,  my_type** &matrixB, const size_t n); //mult of 2 n*n matrix
-int MatrixMunt(my_type** &matrix, my_type* &vector, const size_t n); //mult of n*n matrix on 1*n
+int MatrixMult(my_type** &matrix, my_type* &vector, const size_t n); //mult of n*n matrix on 1*n
+int MatrixCopy(my_type** &matrixA, my_type** &matrixB, const size_t n); // copy matrix A to matrix B
 
 int QRDecomposer(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, const size_t n);
+int GetMatrixT();
+int GetMatrixI(my_type** &matrix, const size_t n);
 
 int WriteMatrix(const std::string FileNameOutput, const std::string label, my_type** &matrix, const size_t n);
 int WriteVector(const std::string FileNameOutput, const std::string label, my_type* &vector, const size_t n);
@@ -87,6 +90,12 @@ int ReadData(const std::string fileNameMatrix, const std::string fileNameVector,
     return 0;
 }
 
+int Calculations()
+{
+    // QRDecomposion();
+    
+}
+
 int WriteData(std::string fileNameQ, std::string fileNameR, std::string fileNameX,
         my_type** &matrixQ, my_type** &matrixR, my_type* &vectorX, const size_t n)
 {
@@ -112,6 +121,85 @@ int FreeMemory(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_ty
     delete[] matrixQ;
     delete[] matrixR;
 
+    return 0;
+}
+
+int MatrixMult(){}//matrix * matrix
+
+int MatrixMult(){}//matrix * vector
+
+int MatrixCopy(){}
+
+int QRDecomposer()
+{
+    GetMatrixT();
+    // R = TA 
+    // b* = TB
+    // Rx = b*
+    return 0;
+}
+
+int GetMatrixT(my_type** &matrixA, my_type** &matrixT, const size_t n)
+{
+    //Tmain=E Ti=E matrix'
+    GetMatrixI(matrixT, n);
+    my_type** matrixTi = new my_type*[n];
+    my_type** matrixBuffer = new my_type*[n];
+
+    for(int i = 0; i < n; ++i)
+    {
+        matrixTi[i] = new my_type[n];
+        matrixBuffer[i] = new my_type[n];
+    }
+
+    for(int i = 0; i < n - 1; ++i)
+    {
+        for(int j = i + 1; j < n; ++j)
+        {
+            if(matrixA[i][j] != 0)
+            {
+                my_type radical = sqrt(matrixA[i][i] * matrixA[i][i] + matrixA[i][j] + matrixA[i][j]);
+                c = matrixA[i][i] / radical;
+                s = matrixA[i][j] / radical;
+                
+                Ti[i][i] = c;
+                Ti[j][j] = c;
+                Ti[i][j] = s;
+                Ti[j][i] = -s;
+
+                MatrixMult(matrixTi, matrixT, matrixBuffer);
+                //Tmain=Result
+            }
+        }
+    }
+
+    for(int i = 0; i < n; ++i)
+    {
+        delete[] matrixTi[i];
+        delete[] matrixBuffer[i];
+    }
+
+    delete[] matrixTi;
+    delete[] matrixBuffer;
+    return 0;
+}
+
+int GetMatrixI(my_type** &matrix, const size_t n)
+{
+    for(int i = 0; i < n; ++i)
+    {
+        for(int j = 0; j < n; ++j)
+        {
+            if(i == j)
+            {
+                matrix[i][j] = 1;
+            }
+            else
+            {
+                matrix[i][j] = 0;
+            }
+        }
+    }
     return 0;
 }
 
