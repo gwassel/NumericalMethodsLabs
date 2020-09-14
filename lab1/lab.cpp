@@ -137,9 +137,8 @@ int MatrixCopy(my_type** &matrixPaste, my_type** &matrixCopy, const size_t n)
         {
             matrixPaste[i][j] = matrixCopy[i][j];
         }
-
-        return 0;
     }
+    return 0;
 } // cope matrix A in matrix B
 
 int QRDecomposer(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, const size_t n)
@@ -151,7 +150,7 @@ int QRDecomposer(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, con
     }
     
 
-    GetMatrixT(matrixA, matrixT);
+    GetMatrixT(matrixA, matrixT, n);
 
     MatrixMult(matrixT, matrixA, matrixR, n);
 
