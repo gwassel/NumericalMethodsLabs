@@ -93,6 +93,7 @@ int ReadData(const std::string fileNameMatrix, const std::string fileNameVector,
 int Calculations()
 {
     // QRDecomposion();
+    return 0;
     
 }
 
@@ -124,15 +125,36 @@ int FreeMemory(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_ty
     return 0;
 }
 
-int MatrixMult(){}//matrix * matrix
+int MatrixMult(my_type** &matrixA, my_type** &matrixB, my_type** &matrixResult, const size_t n){return 0;}//matrixA * matrixB
 
-int MatrixMult(){}//matrix * vector
+int MatrixMult(my_type** &matrix, my_type* &vector, my_type* &vectorResult){return 0;}//matrix * vector
 
-int MatrixCopy(){}
-
-int QRDecomposer()
+int MatrixCopy(my_type** &matrixPaste, my_type** &matrixCopy, const size_t n)
 {
-    GetMatrixT();
+    for(int i = 0; i < n; ++i)
+    {
+        for(int j = 0; j < n; ++j)
+        {
+            matrixPaste[i][j] = matrixCopy[i][j];
+        }
+
+        return 0;
+    }
+} // cope matrix A in matrix B
+
+int QRDecomposer(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, const size_t n)
+{
+    my_type** matrixT = new my_type*[n];
+    for(int i = 0; i < n; ++i)
+    {
+        matrixT[i] = new my_type[n];
+    }
+    
+
+    GetMatrixT(matrixA, matrixT);
+
+    MatrixMult(matrixT, matrixA, matrixR, n);
+
     // R = TA 
     // b* = TB
     // Rx = b*
@@ -151,6 +173,8 @@ int GetMatrixT(my_type** &matrixA, my_type** &matrixT, const size_t n)
         matrixTi[i] = new my_type[n];
         matrixBuffer[i] = new my_type[n];
     }
+    
+    GetMatrixI(matrixTi, n);
 
     for(int i = 0; i < n - 1; ++i)
     {
@@ -167,8 +191,8 @@ int GetMatrixT(my_type** &matrixA, my_type** &matrixT, const size_t n)
                 Ti[i][j] = s;
                 Ti[j][i] = -s;
 
-                MatrixMult(matrixTi, matrixT, matrixBuffer);
-                //Tmain=Result
+                MatrixMult(matrixTi, matrixT, matrixBuffer, n);
+                MatrixCopy(MatrixT, matrixBuffer, n);
             }
         }
     }
@@ -181,6 +205,7 @@ int GetMatrixT(my_type** &matrixA, my_type** &matrixT, const size_t n)
 
     delete[] matrixTi;
     delete[] matrixBuffer;
+
     return 0;
 }
 
@@ -200,6 +225,7 @@ int GetMatrixI(my_type** &matrix, const size_t n)
             }
         }
     }
+
     return 0;
 }
 
