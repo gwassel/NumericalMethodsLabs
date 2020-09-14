@@ -24,13 +24,15 @@ int FreeMemory(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_ty
 
 int MatrixMult(my_type** &matrixA,  my_type** &matrixB, const size_t n); //mult of 2 n*n matrix
 int MatrixMult(my_type** &matrix, my_type* &vector, const size_t n); //mult of n*n matrix on 1*n
-int MatrixCopy(my_type** &matrixA, my_type** &matrixB, const size_t n); // copy matrix A to matrix B
+int MatrixCopy(my_type** &matrixPaste, my_type** &matrixCopy, const size_t n); // copy matrix
+int MatrixTranspose(my_type** &matrixInit, my_type** &matrixResult, const size_t n); // transpose matrix init into matrix result
 
 int QRDecomposer(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, const size_t n);
-int GetMatrixT();
+int GetMatrixT(my_type** &matrixA, my_type** &matrixT, const size_t n);
 int GetMatrixI(my_type** &matrix, const size_t n);
 
-int WriteMatrix(const std::string FileNameOutput, const std::string label, my_type** &matrix, const size_t n);
+int WriteMatrix(const std::string FileNameOutput, const std::string label, my_type** &matrix, const size_t n); // write matrix to file
+int WriteMatrix(const std::string label, my_type** &matrix, const size_t n); // write matrix to console
 int WriteVector(const std::string FileNameOutput, const std::string label, my_type* &vector, const size_t n);
 
 //init
@@ -90,9 +92,11 @@ int ReadData(const std::string fileNameMatrix, const std::string fileNameVector,
     return 0;
 }
 
-int Calculations()
+int Calculations(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type** &vectorB, my_type** &vectorX, const size_t n)
 {
+    QRDecomposer(matrixA, matrixQ, matrixR, n);
     // QRDecomposion();
+    
     return 0;
     
 }
@@ -125,9 +129,25 @@ int FreeMemory(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_ty
     return 0;
 }
 
-int MatrixMult(my_type** &matrixA, my_type** &matrixB, my_type** &matrixResult, const size_t n){return 0;}//matrixA * matrixB
+int MatrixMult(my_type** &matrixA, my_type** &matrixB, my_type** &matrixResult, const size_t n)
+{
+    for(int i = 0; i < n; ++i)
+    {
+        for(int j = 0; j < n; ++j)
+        {
+            my_type sum = 0;
+            for(int k = 0; k < n; ++k)
+            {
+                sum += matrixA[i][k] * matrixB[k][j];
+            }
+            matrixResult[i][j] = sum;
+        }
+    }
 
-int MatrixMult(my_type** &matrix, my_type* &vector, my_type* &vectorResult){return 0;}//matrix * vector
+    return 0;
+}//matrixA * matrixB
+
+int MatrixMult(my_type** &matrix, my_type* &vector, my_type* &vectorResult){return (0/0);}//matrix * vector
 
 int MatrixCopy(my_type** &matrixPaste, my_type** &matrixCopy, const size_t n)
 {
@@ -139,7 +159,20 @@ int MatrixCopy(my_type** &matrixPaste, my_type** &matrixCopy, const size_t n)
         }
     }
     return 0;
-} // cope matrix A in matrix B
+} 
+
+int MatrixTranspose(my_type** &matrixInit, my_type** &matrixResult, const size_t n)
+{
+    for(int i = 0; i < n; ++i)
+    {
+        for(int j = 0; j < n; ++j)
+        {
+            matrixResult[i][j] = matrixInit[j][i];
+        }
+    }
+
+    return 0;
+}
 
 int QRDecomposer(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, const size_t n)
 {
@@ -152,11 +185,21 @@ int QRDecomposer(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, con
 
     GetMatrixT(matrixA, matrixT, n);
 
-    MatrixMult(matrixT, matrixA, matrixR, n);
+    MatrixMult(matrixT, matrixA, matrixR, n); // R = TA
+    // Q = transpose(T);
+    MatrixTranspose(matrixT, matrixQ, n); // Q = transpose(T)
 
-    // R = TA 
-    // b* = TB
+    // b* = Tb
     // Rx = b*
+    
+
+    for(int i = 0; i < n; ++i)
+    {
+        delete[] matrixT[i];
+    } 
+
+    delete[] matrixT;
+    
     return 0;
 }
 
@@ -174,24 +217,30 @@ int GetMatrixT(my_type** &matrixA, my_type** &matrixT, const size_t n)
     }
     
     GetMatrixI(matrixTi, n);
-
+    
     for(int i = 0; i < n - 1; ++i)
     {
         for(int j = i + 1; j < n; ++j)
         {
-            if(matrixA[i][j] != 0)
+            if(matrixA[j][i] != 0)
             {
-                my_type radical = sqrt(matrixA[i][i] * matrixA[i][i] + matrixA[i][j] + matrixA[i][j]);
-                c = matrixA[i][i] / radical;
-                s = matrixA[i][j] / radical;
+                my_type c = matrixA[i][i];
+                my_type s = matrixA[j][i];
                 
-                Ti[i][i] = c;
-                Ti[j][j] = c;
-                Ti[i][j] = s;
-                Ti[j][i] = -s;
+                my_type radical = sqrt(c * c + s * s);
+                
+                c /= radical;
+                s /= radical;
+                
+                matrixTi[i][i] = c;
+                matrixTi[j][j] = c;
+                matrixTi[j][i] = s;
+                matrixTi[i][j] = -s;
 
                 MatrixMult(matrixTi, matrixT, matrixBuffer, n);
-                MatrixCopy(MatrixT, matrixBuffer, n);
+                MatrixCopy(matrixT, matrixBuffer, n);
+
+                GetMatrixI(matrixTi, n);
             }
         }
     }
@@ -236,7 +285,8 @@ int WriteMatrix(const std::string fileNameOutput, const std::string label, my_ty
     fileOutput << label << "\n";
     for(int i = 0; i < n; ++i)
     {
-        for(int j = 0; j < n; ++j){
+        for(int j = 0; j < n; ++j)
+        {
             fileOutput << matrix[i][j] << " ";
         }
         fileOutput << "\n";
@@ -245,6 +295,21 @@ int WriteMatrix(const std::string fileNameOutput, const std::string label, my_ty
     
     fileOutput.close();
 
+    return 0;
+}
+
+int WriteMatrix(const std::string label, my_type** &matrix, const size_t n)
+{
+    std::cout << label << "\n";
+
+    for(int i = 0; i < n; ++i)
+    {
+        for(int j = 0; j < n; ++j)
+        {
+            std::cout << matrix[i][j] << " ";    
+        }
+        std::cout << "\n";
+    }
     return 0;
 }
 
@@ -283,13 +348,15 @@ int main()
     std::string fileNameR = pathData + "outputR";
     std::string fileNameX = pathData + "outputX";
 
-    size_t n = 5;
+    size_t n = 4;
 
     AllocateMemory(matrixA, matrixQ, matrixR, vectorB, n);
 
     ReadData(fileNameMatrix, fileNameVector, matrixA, vectorB, n);   
-    
-    WriteData(fileNameQ, fileNameR, fileNameX, matrixA, matrixA, vectorB, n);
+   
+    //QRDecomposer(matrixA, matrixQ, matrixR, n);
+
+    WriteData(fileNameQ, fileNameR, fileNameX, matrixQ, matrixR, vectorB, n);
 
     FreeMemory(matrixA, matrixQ, matrixR, vectorB, n);
 
