@@ -12,13 +12,18 @@ using json = nlohmann::json;
 int ReadInit(const std::string path, std::string &fileNameA, std::string &fileNameB, std::string &fileNameQ,
         std::string &fileNameR, std::string &fileNameX, size_t &n); //read configs
 
-int AllocateMemory(my_type** &matrixA, my_type** &matrixQ, my_type** matrixR, my_type* &vectorB, my_type* &columnX, const size_t n);
+int AllocateMemory(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, 
+        my_type* &vectorX, my_type** &matrixBuffer1, my_type** &matrixBuffer2, 
+        my_type* &vectorBuffer, const size_t n);
 int AllocateMemory(my_type** &matrix, const size_t n);
 int AllocateMemory(my_type* &vector, const size_t n);
 
-int ReadData(const std::string fileNameMatrix, const std::string fileNameVector, my_type** &matrixA, my_type* &vectorB, const size_t n); //read matrix and column
+int ReadData(const std::string fileNameMatrix, const std::string fileNameVector, 
+        my_type** &matrixA, my_type* &vectorB, const size_t n); //read matrix and column
 
-int Calculations(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, my_type* &columnX, const size_t n); //doesnt work!!!!!!!
+int Calculations(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, 
+        my_type* &vectorB, my_type* &columnX, my_type** &matrixBuffer1, 
+        my_type** &matrixBuffer2, my_type* &vectorBStarred, const size_t n);
 
 int WriteData(std::string fileNameQ, std::string fileNameR, std::string fileNameX, 
         my_type** &matrixQ, my_type** &matrixR, my_type* &vectorX, const size_t n); //write results in output file
@@ -33,14 +38,16 @@ int MatrixCopy(my_type** &matrixPaste, my_type** &matrixCopy, const size_t n); /
 int MatrixTranspose(my_type** &matrixInit, my_type** &matrixResult, const size_t n); // transpose matrix init into matrix result
 int VectorCopy(my_type* &vectorPaste, my_type* &vectorCopy, const size_t n);
 
-int QRDecomposer(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, const size_t n);
-int GetMatrixT(my_type** &matrixA, my_type** &matrixT, const size_t n);
+int QRDecomposer(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type** &matrixT,
+        my_type** &matrixBuffer, const size_t n);
+int GetMatrixT(my_type** &matrixA, my_type** &matrixT, my_type** &matrixTi, const size_t n);
 int GetMatrixI(my_type** &matrix, const size_t n);
 int ReverseMotion(my_type** &matrixA, my_type* &vectorX, my_type* &vectorB, const size_t n); // solve Ax = b
 
 int WriteMatrix(const std::string FileNameOutput, const std::string label, my_type** &matrix, const size_t n); // write matrix to file
 int WriteMatrix(const std::string label, my_type** &matrix, const size_t n); // write matrix to console
 int WriteVector(const std::string FileNameOutput, const std::string label, my_type* &vector, const size_t n);
+int WriteVector(const std::string label, my_type* &vector, const size_t n);
 
 int WriteJsonCfgsExample(const std::string path);
 
@@ -66,13 +73,19 @@ int ReadInit(const std::string path, std::string &fileNameA, std::string &fileNa
     return 0;
 }
 
-int AllocateMemory(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, const size_t n)
+int AllocateMemory(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, 
+        my_type* &vectorX, my_type** &matrixBuffer1, my_type** &matrixBuffer2, 
+        my_type* &vectorBuffer, const size_t n)
 {
     AllocateMemory(matrixA, n);
     AllocateMemory(matrixQ, n);
     AllocateMemory(matrixR, n);
     AllocateMemory(vectorB, n);
-   
+    AllocateMemory(vectorX, n);
+    
+    AllocateMemory(matrixBuffer1, n);
+    AllocateMemory(matrixBuffer2, n);
+    AllocateMemory(vectorBuffer, n);
     return 0;
 }
 
@@ -133,11 +146,12 @@ int ReadData(const std::string fileNameMatrix, const std::string fileNameVector,
     return 0;
 }
 
-int Calculations(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, my_type* &vectorX, my_type** &matrixBuffer1, my_type** &matrixBuffer2, my_type* &vectorBStarred, const size_t n)
+int Calculations(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, 
+        my_type* &vectorX, my_type** &matrixBuffer1, my_type** &matrixBuffer2, 
+        my_type* &vectorBStarred, const size_t n)
 {
-    
-    QRDecomposer(matrixA, matrixQ, matrixR, n);
-    
+    QRDecomposer(matrixA, matrixQ, matrixR, matrixBuffer1, matrixBuffer2, n);
+    WriteMatrix("R", matrixR, n);
     MatrixMult(matrixR, vectorB, vectorBStarred, n);
     //b* = Tb    
     //Rx = b*
@@ -156,12 +170,17 @@ int WriteData(std::string fileNameQ, std::string fileNameR, std::string fileName
     return 0;
 }
 
-int FreeMemory(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, const size_t n)
+int FreeMemory(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, 
+        my_type** &matrixBuffer1, my_type** &matrixBuffer2, my_type* &vectorBuffer, const size_t n)
 {
     FreeMemory(matrixA, n);
     FreeMemory(matrixQ, n);
     FreeMemory(matrixR, n);
     FreeMemory(vectorB, n);
+
+    FreeMemory(matrixBuffer1, n);
+    FreeMemory(matrixBuffer2, n);
+    FreeMemory(vectorBuffer, n);
 
     return 0;
 }
@@ -214,6 +233,7 @@ int MatrixMult(my_type** &matrix, my_type* &vector, my_type* &vectorResult, cons
         }
         vectorResult[i] = sum;
     }
+
     return (0);
 }//matrix * vector
 
@@ -252,43 +272,37 @@ int VectorCopy(my_type* &vectorPaste, my_type* &vectorCopy, const size_t n)
     return 0;
 }
 
-int QRDecomposer(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, const size_t n)
+int QRDecomposer(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type** &matrixT,
+        my_type** &matrixBuffer, const size_t n)
 {
-    my_type** matrixT = new my_type*[n];
-    
-    AllocateMemory(matrixT, n);
-
-    GetMatrixT(matrixA, matrixT, n);
+    GetMatrixT(matrixA, matrixT, matrixBuffer, n);
 
     MatrixMult(matrixT, matrixA, matrixR, n); // R = TA
     // Q = transpose(T);
     MatrixTranspose(matrixT, matrixQ, n); // Q = transpose(T)
 
-    FreeMemory(matrixT, n);
-
     return 0;
 }
 
-int GetMatrixT(my_type** &matrixA, my_type** &matrixT, const size_t n)
+int GetMatrixT(my_type** &matrixA, my_type** &matrixT, my_type** &matrixTi, const size_t n)
 {
-    //Tmain=E Ti=E matrix'
     GetMatrixI(matrixT, n);
-    my_type** matrixTi = new my_type*[n];
+    GetMatrixI(matrixTi, n);
+
     my_type** matrixBuffer = new my_type*[n];
 
     for(int i = 0; i < n; ++i)
     {
-        matrixTi[i] = new my_type[n];
         matrixBuffer[i] = new my_type[n];
     }
     
-    GetMatrixI(matrixTi, n);
+
     
     for(int i = 0; i < n - 1; ++i)
     {
         for(int j = i + 1; j < n; ++j)
         {
-            if(matrixA[j][i] != 0)
+            if(matrixA[i][j] != 0)
             {
                 my_type c = matrixA[i][i];
                 my_type s = matrixA[j][i];
@@ -300,25 +314,62 @@ int GetMatrixT(my_type** &matrixA, my_type** &matrixT, const size_t n)
                 
                 matrixTi[i][i] = c;
                 matrixTi[j][j] = c;
-                matrixTi[j][i] = s;
-                matrixTi[i][j] = -s;
+                matrixTi[j][i] = -s;
+                matrixTi[i][j] = s;
+
+                WriteMatrix("Ti", matrixTi, n);
 
                 MatrixMult(matrixTi, matrixT, matrixBuffer, n);
                 MatrixCopy(matrixT, matrixBuffer, n);
+                std::cout << "i= " << i << "j= " << j << "c= " << c<< "s= " << s << "\n";
+                WriteMatrix("T", matrixT, n);
 
                 GetMatrixI(matrixTi, n);
             }
         }
     }
 
+
+
     for(int i = 0; i < n; ++i)
     {
-        delete[] matrixTi[i];
         delete[] matrixBuffer[i];
     }
 
-    delete[] matrixTi;
     delete[] matrixBuffer;
+
+    return 0;
+}
+
+int GetMatrixR(my_type** &matrixR, my_type* &vectorBuffer1, my_type* &vectorBuffer2, const size_t n)
+{
+
+    for(int i = 0; i < n - 1; ++i)
+    {
+        for(int j = i + 1; j < n; ++j)
+        {
+            my_type c = matrixR[i][i];
+            my_type s = matrixR[j][i];
+                
+            my_type radical = sqrt(c * c + s * s);
+                
+            c /= radical;
+            s /= radical;
+                
+            for(int k = 0; k < n; ++k)
+            {
+                vectorBuffer1[k] = c * matrixR[i][k] + s * matrixR[j][k]; //matrixR[i][k]
+                vectorBuffer2[k] = (-s) * matrixR[i][k] + c * matrixR[j][k]; //matrixR[j][k]
+            }
+
+            for(int k = 0; k < n; ++k)
+            {
+                matrixR[i][k] = vectorBuffer1[k];
+                matrixR[j][k] = vectorBuffer2[k];
+            }
+            WriteMatrix("R", matrixR, n);
+        }
+    }
 
     return 0;
 }
@@ -345,6 +396,7 @@ int GetMatrixI(my_type** &matrix, const size_t n)
 
 int ReverseMotion(my_type** &matrixA, my_type* &vectorX, my_type* &vectorB, const size_t n)
 {
+    vectorX[0] = 1;
     for(int i = n - 1; i >= 0; --i)
     {
         my_type sum = 0;
@@ -411,6 +463,17 @@ int WriteVector(std::string fileNameOutput, const std::string label, my_type* &v
     return 0;
 }
 
+int WriteVector(const std::string label, my_type* &vector, const size_t n)
+{
+    std::cout << label << "\n";
+
+    for(int i = 0; i < n; ++i)
+    {
+        std::cout << vector[i] << " ";
+    }
+    return 0;
+}
+
 int WriteJsonCfgsExample(const std::string path)
 {
     json j = {
@@ -459,15 +522,22 @@ int main()
 
     ReadInit(pathConfig, fileNameA, fileNameB, fileNameQ, fileNameR, fileNameX, n);
     
-    AllocateMemory(matrixA, matrixQ, matrixR, vectorB, n);
+    AllocateMemory(matrixA, matrixQ, matrixR, vectorB, vectorX, matrixBuffer1,
+            matrixBuffer2, vectorBuffer, n);
 
     ReadData(fileNameA, fileNameB, matrixA, vectorB, n);   
    
-    QRDecomposer(matrixA, matrixQ, matrixR, n);
+    //Calculations(matrixA, matrixQ, matrixR, vectorB, vectorX, 
+    //        matrixBuffer1, matrixBuffer2, vectorBuffer, n);
 
-    WriteData(fileNameQ, fileNameR, fileNameX, matrixQ, matrixR, vectorX, n);
+    // QRDecomposer(matrixA, matrixQ, matrixR, matrixBuffer1, matrixBuffer2, n);
 
-    FreeMemory(matrixA, matrixQ, matrixR, vectorB, n);
+    GetMatrixR(matrixA, vectorB, vectorX, n);
+
+    WriteData(fileNameQ, fileNameR, fileNameX, matrixQ, matrixA, vectorX, n);
+
+    FreeMemory(matrixA, matrixQ, matrixR, vectorB, matrixBuffer1,
+            matrixBuffer2, vectorBuffer, n);
 
     WriteJsonCfgsExample(pathConfig);
     
