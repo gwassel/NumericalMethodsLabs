@@ -9,7 +9,8 @@
 using json = nlohmann::json;
 
 //header
-int ReadInit(const std::string path); //read configs
+int ReadInit(const std::string path, std::string &fileNameA, std::string &fileNameB, std::string &fileNameQ,
+        std::string &fileNameR, std::string &fileNameX, size_t &n); //read configs
 
 int AllocateMemory(my_type** &matrixA, my_type** &matrixQ, my_type** matrixR, my_type* &vectorB, my_type* &columnX, const size_t n);
 int AllocateMemory(my_type** &matrix, const size_t n);
@@ -40,7 +41,30 @@ int WriteMatrix(const std::string FileNameOutput, const std::string label, my_ty
 int WriteMatrix(const std::string label, my_type** &matrix, const size_t n); // write matrix to console
 int WriteVector(const std::string FileNameOutput, const std::string label, my_type* &vector, const size_t n);
 
+int WriteJsonCfgsExample(const std::string path);
+
 //init
+int ReadInit(const std::string path, std::string &fileNameA, std::string &fileNameB, std::string &fileNameQ,
+        std::string &fileNameR, std::string &fileNameX, size_t &n)
+{
+    std::ifstream fileJsonInput;
+    fileJsonInput.open(path);
+
+    json objJson;
+    fileJsonInput >> objJson;
+    
+    fileJsonInput.close();
+
+    fileNameA = objJson["fileInputMatrixA"];
+    fileNameB = objJson["fileInputVectorB"];
+    fileNameQ = objJson["fileOutputMatrixQ"];
+    fileNameR = objJson["fileOutputMatrixR"];
+    fileNameX = objJson["fileOutputVectorX"];
+    n = objJson["n"];
+
+    return 0;
+}
+
 int AllocateMemory(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, const size_t n)
 {
     AllocateMemory(matrixA, n);
@@ -69,7 +93,8 @@ int AllocateMemory(my_type* &vector, const size_t n)
     return 0;
 }
 
-int ReadData(const std::string fileNameMatrix, const std::string fileNameVector, my_type** &matrixA, my_type* &vectorB, const size_t n)
+int ReadData(const std::string fileNameMatrix, const std::string fileNameVector, my_type** &matrixA,
+        my_type* &vectorB, const size_t n)
 {
     std::ifstream matrixFile;
     matrixFile.open(fileNameMatrix);
@@ -375,35 +400,62 @@ int WriteVector(std::string fileNameOutput, const std::string label, my_type* &v
     return 0;
 }
 
+int WriteJsonCfgsExample(const std::string path)
+{
+    json j = {
+        {"n", 4},
+        {"fileInputMatrixA", "data/matrixA"},
+        {"fileInputVectorB", "data/vectorB"},
+        {"fileOutputMatrixQ", "data/matrixQ"},
+        {"fileOutputMatrixR", "data/matrixR"},
+        {"fileOutputVectorX", "data/vectorX"}
+    };
+
+    std::ofstream fileJsonOutput;
+    fileJsonOutput.open(path);
+
+    fileJsonOutput << j << std::endl;
+    fileJsonOutput.close();
+
+    return 0;
+}
+
 int main()
 {
-    my_type** matrixA;
-    my_type* vectorB;
-    my_type* vectorX;
-    my_type** matrixQ;
-    my_type** matrixR;
+    my_type** matrixA = nullptr;
+    my_type* vectorB = nullptr;
+    my_type* vectorX = nullptr;
+    my_type** matrixQ = nullptr;
+    my_type** matrixR = nullptr;
     
     const std::string pathConfig = "configs/config.json";
     const std::string pathData = "data/";
     
-    std::string fileNameMatrix = pathData + "matrix";
-    std::string fileNameVector = pathData + "vector";
+    //inputs
+    std::string fileNameA = "";
+    std::string fileNameB = "";
     
-    std::string fileNameQ = pathData + "outputQ";
-    std::string fileNameR = pathData + "outputR";
-    std::string fileNameX = pathData + "outputX";
+    //outputs
+    std::string fileNameQ = "";
+    std::string fileNameR = "";
+    std::string fileNameX = "";
+    
+    size_t n = 0;
 
-    size_t n = 4;
+    //AllocateMemory(matrixA, matrixQ, matrixR, vectorB, n);
 
-    AllocateMemory(matrixA, matrixQ, matrixR, vectorB, n);
-
-    ReadData(fileNameMatrix, fileNameVector, matrixA, vectorB, n);   
+    //ReadData(fileNameMatrix, fileNameVector, matrixA, vectorB, n);   
    
     //QRDecomposer(matrixA, matrixQ, matrixR, n);
 
-    WriteData(fileNameQ, fileNameR, fileNameX, matrixQ, matrixR, vectorB, n);
+    //WriteData(fileNameQ, fileNameR, fileNameX, matrixQ, matrixR, vectorB, n);
 
-    FreeMemory(matrixA, matrixQ, matrixR, vectorB, n);
+    //FreeMemory(matrixA, matrixQ, matrixR, vectorB, n);
+
+    //WriteJsonCfgsExample(pathConfig);
+    ReadInit(pathConfig, fileNameA, fileNameB, fileNameQ, fileNameR, fileNameX, n);
+    
+    std::cout << n << "\n";
 
     return 0;
 }
