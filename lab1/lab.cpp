@@ -341,8 +341,9 @@ int GetMatrixT(my_type** &matrixA, my_type** &matrixT, my_type** &matrixTi, cons
     return 0;
 }
 
-int GetMatrixR(my_type** &matrixR, my_type* &vectorBuffer1, my_type* &vectorBuffer2, const size_t n)
+int GetMatrixR(my_type** &matrixQ, my_type** &matrixR, my_type* &vectorBuffer1, my_type* &vectorBuffer2, const size_t n)
 {
+    GetMatrixI(matrixQ, n);
 
     for(int i = 0; i < n - 1; ++i)
     {
@@ -367,7 +368,19 @@ int GetMatrixR(my_type** &matrixR, my_type* &vectorBuffer1, my_type* &vectorBuff
                 matrixR[i][k] = vectorBuffer1[k];
                 matrixR[j][k] = vectorBuffer2[k];
             }
-            WriteMatrix("R", matrixR, n);
+
+            for(int k = 0; k < n; ++k)
+            {
+                vectorBuffer1[k] = c * matrixQ[i][k] + s * matrixQ[j][k];
+                vectorBuffer2[k] = (-s) * matrixQ[i][k] + c * matrixQ[j][k];
+            }
+
+            for(int k = 0; k < n; ++k)
+            {
+                matrixQ[i][k] = vectorBuffer1[k];
+                matrixQ[j][k] = vectorBuffer2[k];
+            }
+            //WriteMatrix("R", matrixR, n);
         }
     }
 
@@ -532,7 +545,9 @@ int main()
 
     // QRDecomposer(matrixA, matrixQ, matrixR, matrixBuffer1, matrixBuffer2, n);
 
-    GetMatrixR(matrixA, vectorB, vectorX, n);
+    GetMatrixR(matrixBuffer1, matrixA, vectorB, vectorX, n);
+
+    MatrixTranspose(matrixBuffer1, matrixQ, n);
 
     WriteData(fileNameQ, fileNameR, fileNameX, matrixQ, matrixA, vectorX, n);
 
