@@ -51,6 +51,11 @@ int WriteVector(const std::string label, my_type* &vector, const size_t n);
 
 int WriteJsonCfgsExample(const std::string path);
 
+//is correct funcs
+//is Q*transp(Q) ==1
+//is QR=A
+//is R a upper triangle
+
 //init
 int ReadInit(const std::string path, std::string &fileNameA, std::string &fileNameB, std::string &fileNameQ,
         std::string &fileNameR, std::string &fileNameX, size_t &n)
