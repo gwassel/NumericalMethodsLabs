@@ -38,7 +38,8 @@ int MatrixCopy(my_type** &matrixPaste, my_type** &matrixCopy, const size_t n); /
 int MatrixTranspose(my_type** &matrixInit, my_type** &matrixResult, const size_t n); // transpose matrix init into matrix result
 int VectorCopy(my_type* &vectorPaste, my_type* &vectorCopy, const size_t n);
 
-int QRDecomposer(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type** &matrixT,
+int QRDecomposer(my_type** &matrixQ, my_type** &matrixR, my_type* &vectorBuffer1, my_type* &vectorBuffer2, const size_t n);
+int QRDecomposer2(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type** &matrixT,
         my_type** &matrixBuffer, const size_t n);
 int GetMatrixT(my_type** &matrixA, my_type** &matrixT, my_type** &matrixTi, const size_t n);
 int GetMatrixI(my_type** &matrix, const size_t n);
@@ -155,13 +156,14 @@ int Calculations(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_
         my_type* &vectorX, my_type** &matrixBuffer1, my_type** &matrixBuffer2, 
         my_type* &vectorBStarred, const size_t n)
 {
-    QRDecomposer(matrixA, matrixQ, matrixR, matrixBuffer1, matrixBuffer2, n);
+    MatrixCopy(matrixR, matrixA, n);
+    //QRDecomposer2(matrixA, matrixQ, matrixR, matrixBuffer1, matrixBuffer2, n);
+    QRDecomposer(matrixQ, matrixR, matrixBuffer1[0], matrixBuffer1[1], n);
+    //WriteMatrix("R", matrixR, n);
+    MatrixMult(matrixQ, vectorB, vectorBStarred, n);
     WriteMatrix("R", matrixR, n);
-    MatrixMult(matrixR, vectorB, vectorBStarred, n);
-    //b* = Tb    
-    //Rx = b*
     ReverseMotion(matrixR, vectorX, vectorBStarred, n);
-
+    WriteVector("X", vectorX, n);
     return 0;
 }
 
@@ -277,7 +279,7 @@ int VectorCopy(my_type* &vectorPaste, my_type* &vectorCopy, const size_t n)
     return 0;
 }
 
-int QRDecomposer(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type** &matrixT,
+int QRDecomposer2(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type** &matrixT,
         my_type** &matrixBuffer, const size_t n)
 {
     GetMatrixT(matrixA, matrixT, matrixBuffer, n);
@@ -346,7 +348,7 @@ int GetMatrixT(my_type** &matrixA, my_type** &matrixT, my_type** &matrixTi, cons
     return 0;
 }
 
-int GetMatrixR(my_type** &matrixQ, my_type** &matrixR, my_type* &vectorBuffer1, my_type* &vectorBuffer2, const size_t n)
+int QRDecomposer(my_type** &matrixQ, my_type** &matrixR, my_type* &vectorBuffer1, my_type* &vectorBuffer2, const size_t n)
 {
     GetMatrixI(matrixQ, n);
 
@@ -414,6 +416,7 @@ int GetMatrixI(my_type** &matrix, const size_t n)
 
 int ReverseMotion(my_type** &matrixA, my_type* &vectorX, my_type* &vectorB, const size_t n)
 {
+    WriteVector("B*", vectorB, n);
     vectorX[0] = 1;
     for(int i = n - 1; i >= 0; --i)
     {
@@ -422,8 +425,11 @@ int ReverseMotion(my_type** &matrixA, my_type* &vectorX, my_type* &vectorB, cons
         {
             sum += matrixA[i][j] * vectorX[j];
         }
+        std::cout << "sum: " << sum << std::endl;
         vectorX[i] = (vectorB[i] - sum) / matrixA[i][i];
+        std::cout << "x: " << vectorX[i] << std::endl;
     }
+    std::cout << "\n";
 
     return 0;     
 }
@@ -545,21 +551,12 @@ int main()
 
     ReadData(fileNameA, fileNameB, matrixA, vectorB, n);   
    
-    //Calculations(matrixA, matrixQ, matrixR, vectorB, vectorX, 
-    //        matrixBuffer1, matrixBuffer2, vectorBuffer, n);
+    Calculations(matrixA, matrixQ, matrixR, vectorB, vectorX, matrixBuffer1, matrixBuffer2, vectorBuffer, n); 
 
-    // QRDecomposer(matrixA, matrixQ, matrixR, matrixBuffer1, matrixBuffer2, n);
-
-    GetMatrixR(matrixBuffer1, matrixA, vectorB, vectorX, n);
-
-    MatrixTranspose(matrixBuffer1, matrixQ, n);
-
-    WriteData(fileNameQ, fileNameR, fileNameX, matrixQ, matrixA, vectorX, n);
+    WriteData(fileNameQ, fileNameR, fileNameX, matrixQ, matrixR, vectorX, n);
 
     FreeMemory(matrixA, matrixQ, matrixR, vectorB, matrixBuffer1,
             matrixBuffer2, vectorBuffer, n);
 
-    WriteJsonCfgsExample(pathConfig);
-    
     return 0;
 }
