@@ -518,6 +518,20 @@ int WriteJsonCfgsExample(const std::string path)
     return 0;
 }
 
+int InverseMatrix(my_type** &matrixOrigin, my_type** &matrixInverted, my_type** &matrixT, my_type** &matrixR)
+{
+    matrixCopy(matrixR, matrixA, n);
+
+    QRDecomposer(matrixT, matrixR, matrixInverted[0], matrixInverted[1]);
+
+    for(int i = 0; i < n; ++i)
+    {
+        ReverseMotion(matrixOrigin, matrixInverted[i], matrixT[i])
+    }
+
+    return 0;
+}
+
 int main()
 {
     my_type** matrixA = nullptr;
