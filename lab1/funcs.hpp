@@ -10,10 +10,10 @@ using json = nlohmann::json;
 
 //basic funcs
 int ReadInit(const std::string path, std::string &fileNameA, std::string &fileNameB, std::string &fileNameQ,
-        std::string &fileNameR, std::string &fileNameX, size_t &n); //read configs
+        std::string &fileNameR, std::string &fileNameX, std::string &fileNameAInv, std::string &fileNameA_Ainv, size_t &n); //read configs
 
 int AllocateMemory(my_type** &matrixA, my_type** &matrixT, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, 
-        my_type* &vectorX, my_type** &matrixBuffer1, my_type** &matrixBuffer2, 
+        my_type* &vectorX, my_type** &matrixBuffer1, my_type** &matrixBuffer2, my_type** &matrixAInverted,
         my_type* &vectorBuffer, const size_t n);
 int AllocateMemory(my_type** &matrix, const size_t n);
 int AllocateMemory(my_type* &vector, const size_t n);
@@ -21,11 +21,12 @@ int AllocateMemory(my_type* &vector, const size_t n);
 int ReadData(const std::string fileNameMatrix, const std::string fileNameVector, 
         my_type** &matrixA, my_type* &vectorB, const size_t n); //read matrix and column
 
-int WriteData(std::string fileNameQ, std::string fileNameR, std::string fileNameX, 
-        my_type** &matrixQ, my_type** &matrixR, my_type* &vectorX, const size_t n); //write results in output file
+int WriteData(std::string fileNameQ, std::string fileNameR, std::string fileNameX, std::string fileNameA_AInv, std::string fileNameAInv,
+        my_type** &matrixQ, my_type** &matrixR, my_type* &vectorX, my_type** &matrixA_AInv, 
+        my_type** &matrixAInv, const size_t n); //write results in output file
 
 int FreeMemory(my_type** &matrixA, my_type** &matrixT, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, 
-        my_type* &vectorX, my_type** &matrixBuffer1, my_type** &matrixBuffer2, 
+        my_type* &vectorX, my_type** &matrixBuffer1, my_type** &matrixBuffer2, my_type** &matrixAInverted,
         my_type* &vectorBuffer, const size_t n); 
 int FreeMemory(my_type** &matrix, const size_t n);
 int FreeMemory(my_type* &vector, const size_t n);

@@ -18,7 +18,8 @@ int main()
     my_type** matrixQ = nullptr;
     my_type** matrixR = nullptr;
     my_type** matrixT = nullptr;
-    
+    my_type** matrixAInverted = nullptr;
+
     my_type** matrixBuffer1 = nullptr;
     my_type** matrixBuffer2 = nullptr;
     my_type* vectorBuffer = nullptr;
@@ -34,24 +35,39 @@ int main()
     std::string fileNameQ = "";
     std::string fileNameR = "";
     std::string fileNameX = "";
+    std::string fileNameAInv = "";
+    std::string fileNameA_AInv = "";
     
     size_t n = 0;
 
-    ReadInit(pathConfig, fileNameA, fileNameB, fileNameQ, fileNameR, fileNameX, n);
+    ReadInit(pathConfig, fileNameA, fileNameB, fileNameQ, fileNameR, fileNameX, fileNameAInv, fileNameA_AInv, n);
     
     AllocateMemory(matrixA, matrixT, matrixQ, matrixR, vectorB, vectorX, matrixBuffer1,
-            matrixBuffer2, vectorBuffer, n);
+            matrixBuffer2, matrixAInverted, vectorBuffer, n);
 
     ReadData(fileNameA, fileNameB, matrixA, vectorB, n);   
    
     QRCalculations(matrixA, matrixT, matrixQ, matrixR, vectorB, vectorX, matrixBuffer1, matrixBuffer2, vectorBuffer, n); 
 
-    MatrixInverseTR(matrixT, matrixR, matrixBuffer1, matrixBuffer2, n);
+    MatrixInverseTR(matrixT, matrixR, matrixAInverted, matrixBuffer1, n);
 
-    WriteData(fileNameQ, fileNameR, fileNameX, matrixQ, matrixR, vectorX, n);
+    MatrixMult(matrixA, matrixAInverted, matrixBuffer1, n);
+    MatrixMult(matrixA, vectorX, vectorBuffer, n);// vectorBuffer=B*
 
+    for(int i = 0; i < n; ++i)
+    {
+        vectorBuffer[i] = vectorBuffer[i] - vectorB[i];
+    }
+    std::cout << "octaedral vector norm: " << OctahedralVectorNorm(vectorBuffer, n) << std::endl;
+    std::cout << "cubic vector norm" << CubicVectorNorm(vectorBuffer, n) << std::endl;
+
+    std::cout << "cond octaedral " << OctahedralMatrixNorm(matrixA, n) * OctahedralMatrixNorm(matrixAInverted, n) << std::endl;
+    std::cout << "cond cubic " << CubicMatrixNorm(matrixA, n) * CubicMatrixNorm(matrixAInverted, n) << std::endl;
+
+    WriteData(fileNameQ, fileNameR, fileNameX, fileNameA_AInv, fileNameAInv, matrixQ, matrixR, vectorX, matrixBuffer1, matrixAInverted, n);
+    WriteVector("data/vectorBStarred", "BStarred", vectorBuffer, n);
     FreeMemory(matrixA, matrixT, matrixQ, matrixR, vectorB, vectorX, matrixBuffer1,
-            matrixBuffer2, vectorBuffer, n);
+            matrixBuffer2, matrixAInverted, vectorBuffer, n);
 
     return 0;
 }

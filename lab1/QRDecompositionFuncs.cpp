@@ -6,6 +6,7 @@ int ReverseMotion(my_type** &matrixR, my_type* &vectorX, my_type* &vectorB, cons
 {
     if(matrixR[n-1][n-1] <= epsilon)
     {
+        std::cout << "Matrix is singular\n";
         return 1;
     }
     else{
@@ -30,8 +31,7 @@ int QRCalculations(my_type** &matrixA, my_type** &matrixT, my_type** &matrixQ, m
     MatrixCopy(matrixR, matrixA, n);
     //QRDecomposer2(matrixA, matrixQ, matrixR, matrixBuffer1, matrixBuffer2, n);
     QRDecomposer(matrixA, matrixT, matrixQ, matrixR, matrixBuffer1[0], matrixBuffer1[1], n);
-    //WriteMatrix("R", matrixR, n);
-    MatrixMult(matrixQ, vectorB, vectorBStarred, n);
+    MatrixMult(matrixT, vectorB, vectorBStarred, n);
     ReverseMotion(matrixR, vectorX, vectorBStarred, n);
     return 0;
 }
