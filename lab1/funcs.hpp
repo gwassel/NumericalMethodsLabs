@@ -52,8 +52,6 @@ int VectorCopy(my_type* &vectorPaste, my_type* &vectorCopy, const size_t n);
 //QRD funcs
 int QRDecomposer(my_type** &matrixA, my_type** &matrixT, my_type** &matrixQ, my_type** &matrixR, 
         my_type* &vectorBuffer1, my_type* &vectorBuffer2, my_type* &vectorB, const size_t n);
-int QRDecomposer2(my_type** &matrixA, my_type** &matrixQ, my_type** &matrixR, my_type** &matrixT,
-        my_type** &matrixBuffer, const size_t n);
 int GetMatrixT(my_type** &matrixA, my_type** &matrixT, my_type** &matrixTi, const size_t n);
 int GetMatrixI(my_type** &matrix, const size_t n);
 int ReverseMotion(my_type** &matrixA, my_type* &vectorX, my_type* &vectorB, const size_t n); // solve Ax = b
