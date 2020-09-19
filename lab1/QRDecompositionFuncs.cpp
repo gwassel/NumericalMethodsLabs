@@ -2,7 +2,7 @@
 
 const double epsilon = 1e-12;
 
-int ConditionNumber(my_type** &matrix, my_type* &vector, const size_t column, const size_t n)
+int ConditionNumberQR(my_type** &matrix, my_type* &vector, const size_t column, const size_t n)
 {
     std::cout << "goes CONDNUM stage: " << column << std::endl;
     WriteMatrix("matrixR: ", matrix, n);
@@ -79,7 +79,7 @@ int QRDecomposer(my_type** &matrixA, my_type** &matrixT, my_type** &matrixQ,
     for(int i = 0; i < n - 1; ++i)
     {
         //тут выбор главного элемента
-        ConditionNumber(matrixR, vectorB, i, n);
+        ConditionNumberQR(matrixR, vectorB, i, n);
 
         for(int j = i + 1; j < n; ++j)
         {
