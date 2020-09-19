@@ -48,6 +48,8 @@ int main()
 
     MatrixInverseTR(matrixT, matrixR, matrixAInverted, matrixBuffer1, n);
 
+    MatrixMult(matrixA, matrixAInverted, matrixBuffer1, n);
+
     WriteData(fileNameQ, fileNameR, fileNameX, fileNameA_AInv, fileNameAInv, matrixQ, matrixR, vectorX, matrixBuffer1, matrixAInverted, n);
     WriteVector("data/vectorBStarred", "BStarred", vectorBuffer, n);
     FreeMemory(matrixA, matrixT, matrixQ, matrixR, vectorB, vectorX, matrixBuffer1,

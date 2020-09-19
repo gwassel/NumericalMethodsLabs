@@ -2,18 +2,18 @@
 
 const double epsilon = 1e-12;
 
-int ConditionNumberQR(my_type** &matrix, my_type* &vector, const size_t column, const size_t n)
+int ConditionNumberQR(my_type** &matrixR, my_type** &matrixT, my_type* &vector, const size_t column, const size_t n)
 {
     std::cout << "goes CONDNUM stage: " << column << std::endl;
-    WriteMatrix("matrixR: ", matrix, n);
+    WriteMatrix("matrixR: ", matrixR, n);
     size_t maxNumber = column;
-    my_type maxValue = matrix[column][column];
+    my_type maxValue = matrixR[column][column];
     for(int i = column; i < n; ++i)
     {
-        std::cout << "if " << fabs(matrix[i][column]) << " > " << fabs(maxNumber) << std::endl;
-        if(fabs(matrix[i][column]) > fabs(maxValue))
+        std::cout << "if " << fabs(matrixR[i][column]) << " > " << fabs(maxNumber) << std::endl;
+        if(fabs(matrixR[i][column]) > fabs(maxValue))
         {
-            maxValue = matrix[i][column];
+            maxValue = matrixR[i][column];
             maxNumber = i;
         }
     }
@@ -21,9 +21,9 @@ int ConditionNumberQR(my_type** &matrix, my_type* &vector, const size_t column, 
     if(maxNumber != column) //if diagonal element is not max
     {
         std::cout << "stage " << column << " max number " << maxNumber << std::endl;
-        std::swap(matrix[column], matrix[maxNumber]);
+        std::swap(matrixR[column], matrixR[maxNumber]);
+        std::swap(matrixT[column], matrixT[maxNumber]);
         std::swap(vector[column], vector[maxNumber]);
-        WriteMatrix("matrixR: ", matrix, n);
     }
     else
     {
@@ -79,7 +79,7 @@ int QRDecomposer(my_type** &matrixA, my_type** &matrixT, my_type** &matrixQ,
     for(int i = 0; i < n - 1; ++i)
     {
         //тут выбор главного элемента
-        ConditionNumberQR(matrixR, vectorB, i, n);
+        ConditionNumberQR(matrixR, matrixT, vectorB, i, n);
 
         for(int j = i + 1; j < n; ++j)
         {
