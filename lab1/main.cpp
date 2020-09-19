@@ -1,8 +1,5 @@
 #include "funcs.hpp"
 
-#define my_type double
-
-
 //is correct funcs
 //is Q*transp(Q) ==1
 //is QR=A
@@ -50,19 +47,6 @@ int main()
     QRCalculations(matrixA, matrixT, matrixQ, matrixR, vectorB, vectorX, matrixBuffer1, matrixBuffer2, vectorBuffer, n); 
 
     MatrixInverseTR(matrixT, matrixR, matrixAInverted, matrixBuffer1, n);
-
-    MatrixMult(matrixA, matrixAInverted, matrixBuffer1, n);
-    MatrixMult(matrixA, vectorX, vectorBuffer, n);// vectorBuffer=B*
-
-    for(int i = 0; i < n; ++i)
-    {
-        vectorBuffer[i] = vectorBuffer[i] - vectorB[i];
-    }
-    std::cout << "octaedral vector norm: " << OctahedralVectorNorm(vectorBuffer, n) << std::endl;
-    std::cout << "cubic vector norm" << CubicVectorNorm(vectorBuffer, n) << std::endl;
-
-    std::cout << "cond octaedral " << OctahedralMatrixNorm(matrixA, n) * OctahedralMatrixNorm(matrixAInverted, n) << std::endl;
-    std::cout << "cond cubic " << CubicMatrixNorm(matrixA, n) * CubicMatrixNorm(matrixAInverted, n) << std::endl;
 
     WriteData(fileNameQ, fileNameR, fileNameX, fileNameA_AInv, fileNameAInv, matrixQ, matrixR, vectorX, matrixBuffer1, matrixAInverted, n);
     WriteVector("data/vectorBStarred", "BStarred", vectorBuffer, n);
