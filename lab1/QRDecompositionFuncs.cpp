@@ -10,8 +10,8 @@ int ConditionNumber(my_type** &matrix, my_type* &vector, const size_t column, co
     my_type maxValue = matrix[column][column];
     for(int i = column; i < n; ++i)
     {
-        std::cout << "if " << abs(matrix[i][column]) << " > " << abs(maxNumber) << std::endl;
-        if(abs(matrix[i][column]) > abs(maxValue))
+        std::cout << "if " << fabs(matrix[i][column]) << " > " << fabs(maxNumber) << std::endl;
+        if(fabs(matrix[i][column]) > fabs(maxValue))
         {
             maxValue = matrix[i][column];
             maxNumber = i;
