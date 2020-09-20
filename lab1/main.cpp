@@ -9,6 +9,7 @@
 
 int main()
 {
+    //QR variables
     my_type** matrixA = nullptr;
     my_type* vectorB = nullptr;
     my_type* vectorX = nullptr;
@@ -24,11 +25,9 @@ int main()
     const std::string pathConfig = "configs/config.json";
     const std::string pathData = "data/";
     
-    //inputs
     std::string fileNameA = "";
     std::string fileNameB = "";
     
-    //outputs
     std::string fileNameQ = "";
     std::string fileNameR = "";
     std::string fileNameX = "";
@@ -37,23 +36,42 @@ int main()
     
     size_t n = 0;
 
+    //Gauss variables
+    const int Esize = 4;
+    my_type** EA;
+    my_type** EIA;
+    my_type* EB;
+    my_type* EBF;
+    my_type* EdB;
+    my_type* EX1;
+    my_type* EX2;
+    my_type Econd;
+    my_type Edx;
+    my_type Edb;
+    bool EnoProblem;
+    std::tuple<my_type, my_type, my_type> Ed11;
+    std::tuple<my_type, my_type> Ec11;
+
+    const std::string EpathConfig = "configs/config.json";
+    const std::string EpathData = "data/";
+    std::string EfileNameMatrix;
+    std::string EfileNameVector;
+    const std::string EfileMatrixAName = "/matrixA";
+    const std::string EfileMatrixAIName = "/matrixAI";
+    const std::string EfileVectorX1Name = "/vectorX1";
+    const std::string EfileVectorX2Name = "/vectorX2";
+    const std::string EfileVectorBName = "/vectorB";
+    const std::string EfileParamsName = "/Params";
+    std::string EfolderName;
+
     ReadInit(pathConfig, fileNameA, fileNameB, fileNameQ, fileNameR, fileNameX, fileNameAInv, fileNameA_AInv, n);
+
+    // MMain(matrixA, vectorB, vectorX, matrixQ, matrixR, matrixT, matrixAInverted, matrixBuffer1, matrixBuffer2, vectorBuffer,
+            // fileNameA, fileNameB, fileNameQ, fileNameR, fileNameX, fileNameAInv, fileNameA_AInv, n);
     
-    AllocateMemory(matrixA, matrixT, matrixQ, matrixR, vectorB, vectorX, matrixBuffer1,
-            matrixBuffer2, matrixAInverted, vectorBuffer, n);
-
-    ReadData(fileNameA, fileNameB, matrixA, vectorB, n);   
-   
-    QRCalculations(matrixA, matrixT, matrixQ, matrixR, vectorB, vectorX, matrixBuffer1, matrixBuffer2, vectorBuffer, n); 
-
-    MatrixInverseTR(matrixT, matrixR, matrixAInverted, matrixBuffer1, n);
-
-    MatrixMult(matrixA, matrixAInverted, matrixBuffer1, n);
-
-    WriteData(fileNameQ, fileNameR, fileNameX, fileNameA_AInv, fileNameAInv, matrixQ, matrixR, vectorX, matrixBuffer1, matrixAInverted, n);
-    WriteVector("data/vectorBStarred", "BStarred", vectorBuffer, n);
-    FreeMemory(matrixA, matrixT, matrixQ, matrixR, vectorB, vectorX, matrixBuffer1,
-            matrixBuffer2, matrixAInverted, vectorBuffer, n);
+    EMain(Esize, EA, EIA, EB, EBF, EdB, EX1, EX2, Econd, Edx, Edb, EnoProblem, Ed11, Ec11, EpathConfig, EpathData,
+            EfileNameMatrix, EfileNameVector, EfileMatrixAName, EfileMatrixAIName, EfileVectorX1Name, EfileVectorX2Name,
+            EfileVectorBName, EfileParamsName, EfolderName);
 
     return 0;
 }

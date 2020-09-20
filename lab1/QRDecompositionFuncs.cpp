@@ -2,15 +2,35 @@
 
 const double epsilon = 1e-12;
 
+int MMain(my_type** &matrixA, my_type* &vectorB, my_type* &vectorX, my_type** &matrixQ, my_type** &matrixR, 
+        my_type** &matrixT, my_type** &matrixAInverted, my_type** &matrixBuffer1, my_type** &matrixBuffer2,
+        my_type* &vectorBuffer, std::string fileNameA, std::string fileNameB, std::string fileNameQ, 
+        std::string fileNameR, std::string fileNameX, std::string fileNameAInv, std::string fileNameA_AInv, const size_t n)
+{  
+    AllocateMemory(matrixA, matrixT, matrixQ, matrixR, vectorB, vectorX, matrixBuffer1,
+            matrixBuffer2, matrixAInverted, vectorBuffer, n);
+
+    ReadData(fileNameA, fileNameB, matrixA, vectorB, n);   
+   
+    QRCalculations(matrixA, matrixT, matrixQ, matrixR, vectorB, vectorX, matrixBuffer1, matrixBuffer2, vectorBuffer, n); 
+
+    MatrixInverseTR(matrixT, matrixR, matrixAInverted, matrixBuffer1, n);
+
+    MatrixMult(matrixA, matrixAInverted, matrixBuffer1, n);
+
+    WriteData(fileNameQ, fileNameR, fileNameX, fileNameA_AInv, fileNameAInv, matrixQ, matrixR, vectorX, matrixBuffer1, matrixAInverted, n);
+    WriteVector("data/vectorBStarred", "BStarred", vectorBuffer, n);
+    FreeMemory(matrixA, matrixT, matrixQ, matrixR, vectorB, vectorX, matrixBuffer1,
+            matrixBuffer2, matrixAInverted, vectorBuffer, n);
+    return 0;
+}
+
 int ConditionNumberQR(my_type** &matrixR, my_type** &matrixT, my_type* &vector, const size_t column, const size_t n)
 {
-    std::cout << "goes CONDNUM stage: " << column << std::endl;
-    WriteMatrix("matrixR: ", matrixR, n);
     size_t maxNumber = column;
     my_type maxValue = matrixR[column][column];
     for(int i = column; i < n; ++i)
     {
-        std::cout << "if " << fabs(matrixR[i][column]) << " > " << fabs(maxNumber) << std::endl;
         if(fabs(matrixR[i][column]) > fabs(maxValue))
         {
             maxValue = matrixR[i][column];
@@ -20,15 +40,9 @@ int ConditionNumberQR(my_type** &matrixR, my_type** &matrixT, my_type* &vector, 
 
     if(maxNumber != column) //if diagonal element is not max
     {
-        std::cout << "stage " << column << " max number " << maxNumber << std::endl;
         std::swap(matrixR[column], matrixR[maxNumber]);
         std::swap(matrixT[column], matrixT[maxNumber]);
         std::swap(vector[column], vector[maxNumber]);
-    }
-    else
-    {
-        std::cout << "maxValue:" << maxValue << std::endl;
-        std::cout << "maxNumber:" << maxNumber << std::endl;
     }
 
     return 0;
