@@ -66,8 +66,8 @@ int main()
 
     ReadInit(pathConfig, fileNameA, fileNameB, fileNameQ, fileNameR, fileNameX, fileNameAInv, fileNameA_AInv, n);
 
-    // MMain(matrixA, vectorB, vectorX, matrixQ, matrixR, matrixT, matrixAInverted, matrixBuffer1, matrixBuffer2, vectorBuffer,
-            // fileNameA, fileNameB, fileNameQ, fileNameR, fileNameX, fileNameAInv, fileNameA_AInv, n);
+    MMain(matrixA, vectorB, vectorX, matrixQ, matrixR, matrixT, matrixAInverted, matrixBuffer1, matrixBuffer2, vectorBuffer,
+            fileNameA, fileNameB, fileNameQ, fileNameR, fileNameX, fileNameAInv, fileNameA_AInv, n);
     
     EMain(Esize, EA, EIA, EB, EBF, EdB, EX1, EX2, Econd, Edx, Edb, EnoProblem, Ed11, Ec11, EpathConfig, EpathData,
             EfileNameMatrix, EfileNameVector, EfileMatrixAName, EfileMatrixAIName, EfileVectorX1Name, EfileVectorX2Name,
