@@ -1,7 +1,7 @@
 #include "funcs.hpp"
 
 int ReadInit(const std::string path, std::string &fileNameA, std::string &fileNameB, std::string &fileNameQ,
-        std::string &fileNameR, std::string &fileNameX, size_t &n)
+        std::string &fileNameR, std::string &fileNameX, std::string &fileNameAInv, std::string &fileNameA_Ainv, size_t &n)
 {
     std::ifstream fileJsonInput;
     fileJsonInput.open(path);
@@ -16,13 +16,15 @@ int ReadInit(const std::string path, std::string &fileNameA, std::string &fileNa
     fileNameQ = objJson["fileOutputMatrixQ"];
     fileNameR = objJson["fileOutputMatrixR"];
     fileNameX = objJson["fileOutputVectorX"];
+    fileNameA_Ainv = objJson["fileOutputMatrixA_Ainv"];
+    fileNameAInv = objJson["fileOutputMatrixAInversed"];
     n = objJson["n"];
 
     return 0;
 }
 
 int AllocateMemory(my_type** &matrixA, my_type** &matrixT, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, 
-        my_type* &vectorX, my_type** &matrixBuffer1, my_type** &matrixBuffer2, 
+        my_type* &vectorX, my_type** &matrixBuffer1, my_type** &matrixBuffer2, my_type** &matrixAInverted,
         my_type* &vectorBuffer, const size_t n)
 {
     AllocateMemory(matrixA, n);
@@ -31,6 +33,7 @@ int AllocateMemory(my_type** &matrixA, my_type** &matrixT, my_type** &matrixQ, m
     AllocateMemory(matrixR, n);
     AllocateMemory(vectorB, n);
     AllocateMemory(vectorX, n);
+    AllocateMemory(matrixAInverted, n);
     
     AllocateMemory(matrixBuffer1, n);
     AllocateMemory(matrixBuffer2, n);
@@ -95,18 +98,21 @@ int ReadData(const std::string fileNameMatrix, const std::string fileNameVector,
     return 0;
 }
 
-int WriteData(std::string fileNameQ, std::string fileNameR, std::string fileNameX,
-        my_type** &matrixQ, my_type** &matrixR, my_type* &vectorX, const size_t n)
+int WriteData(std::string fileNameQ, std::string fileNameR, std::string fileNameX, std::string fileNameA_AInv, std::string fileNameAInv,
+        my_type** &matrixQ, my_type** &matrixR, my_type* &vectorX, my_type** &matrixA_AInv, 
+        my_type** &matrixAInv, const size_t n)
 {
     WriteMatrix(fileNameQ, "matrix Q", matrixQ, n);
     WriteMatrix(fileNameR, "matrix R", matrixR, n);
+    WriteMatrix(fileNameA_AInv, "A*A_inv", matrixA_AInv, n);
+    WriteMatrix(fileNameAInv, "AInv", matrixAInv, n);
     WriteVector(fileNameX, "vector X", vectorX, n);
-
+    
     return 0;
 }
 
 int FreeMemory(my_type** &matrixA, my_type** &matrixT, my_type** &matrixQ, my_type** &matrixR, my_type* &vectorB, 
-        my_type* &vectorX, my_type** &matrixBuffer1, my_type** &matrixBuffer2, 
+        my_type* &vectorX, my_type** &matrixBuffer1, my_type** &matrixBuffer2, my_type** &matrixAInverted,
         my_type* &vectorBuffer, const size_t n)
 {
     FreeMemory(matrixA, n);
@@ -115,6 +121,7 @@ int FreeMemory(my_type** &matrixA, my_type** &matrixT, my_type** &matrixQ, my_ty
     FreeMemory(matrixR, n);
     FreeMemory(vectorB, n);
     FreeMemory(vectorX, n);
+    FreeMemory(matrixAInverted, n);
 
     FreeMemory(matrixBuffer1, n);
     FreeMemory(matrixBuffer2, n);
