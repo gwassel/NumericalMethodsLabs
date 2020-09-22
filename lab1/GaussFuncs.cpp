@@ -333,7 +333,7 @@ bool EisDegenerate(my_type**& A, const int& i,const int& size) {
     return false;
 }
 
-my_type ECubicVectorNorm(my_type* p, const int& size) {
+my_type ECubicVectorNorm(my_type* &p, const int& size) {
     my_type sum = 0.0;
     for (int i = 0; i < size; i++) {
         sum += fabs(p[i]);
@@ -341,7 +341,7 @@ my_type ECubicVectorNorm(my_type* p, const int& size) {
     return sum;
 }
 
-my_type ECubicMatrixNorm(my_type** p, const int& size) {
+my_type ECubicMatrixNorm(my_type** &p, const int& size) {
     my_type sum;
     my_type maxSum = 0.0;
     for (int j = 0; j < size; j++) {
@@ -358,7 +358,7 @@ my_type ECubicMatrixNorm(my_type** p, const int& size) {
     return maxSum;
 }
 
-my_type EOctahedralVectorNorm(my_type* p, const int& size) {
+my_type EOctahedralVectorNorm(my_type* &p, const int& size) {
     my_type max = fabs(p[0]);
     for (int i = 1; i < size; i++) {
         if (max < fabs(p[i]))
@@ -367,7 +367,7 @@ my_type EOctahedralVectorNorm(my_type* p, const int& size) {
     return max;
 }
 
-my_type EOctahedralMatrixNorm(my_type** p, const int& size) {
+my_type EOctahedralMatrixNorm(my_type** &p, const int& size) {
     my_type sum;
     my_type maxSum = 0.0;
     for (int i = 0; i < size; i++) {

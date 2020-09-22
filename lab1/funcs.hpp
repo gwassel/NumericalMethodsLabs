@@ -109,10 +109,10 @@ void ESwapColomns(my_type**& A, const int& j1, const int& j2, const int& size);
 bool EisDegenerate(my_type**& A, const int& i, const int& size);
 
 //Нормы
-my_type ECubicVectorNorm(my_type* p, const int& size);
-my_type EOctahedralVectorNorm(my_type* p, const int& size);
-my_type ECubicMatrixNorm(my_type** p, const int& size);
-my_type EOctahedralMatrixNorm(my_type** p, const int& size);
+my_type ECubicVectorNorm(my_type* &p, const int& size);
+my_type EOctahedralVectorNorm(my_type* &p, const int& size);
+my_type ECubicMatrixNorm(my_type** &p, const int& size);
+my_type EOctahedralMatrixNorm(my_type** &p, const int& size);
 
 std::tuple<my_type, my_type> EConditionNumber(my_type**& A, my_type**& IA, const int& size);
 
