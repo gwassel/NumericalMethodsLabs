@@ -1,0 +1,10 @@
+Discrepancy(cubic) 1.13687e-13
+Discrepancy(octahedral) 5.68434e-14
+
+Condition number is bigger than 0.994672
+
+Condition number with cubic matrix norm:3.4977
+Condition number with octahedral matrix norm:3.3379
+
+Relative error of X is  0.0099234
+Relative error of B is 0.576868
