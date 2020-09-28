@@ -2,25 +2,45 @@
 
 int main()
 {
+    int n = 4;
+
     //input data
     double** matrixA = nullptr;
     double* vectorB = nullptr;
 
     //input files names
-    std::string matrixFile = "";
-    std::string vectorFile = "";
+    const std::string FILE_NAME_CFG = "cfg/config.json";
+    std::string fileNameMatrixA = "data2/matrix.dat";
+    std::string fileNameVectorB = "data2/vector.dat";
+    std::string fileNameVectorX0 = "data2/init_approx";
+
+    std::string fileNameMatrixC = "results/C";
+    std::string fileNameVectorX = "results/X";
+    std::string fileNameVectorY = "results/Y";
+
+    //MData
+    double** matrixC = nullptr;
+    double* vectorXCurrent = nullptr;
+    double* vectorXFollow = nullptr;
+    double* vectorY = nullptr;
+
+    //MBuffer
+    double* vectorBuffer = nullptr;
 
 
-    ReadInit();
+//    ReadInit();
 
-    MAllocateMemory();
-    MAllocateBuffer();
+    MAllocateMemory(matrixA, vectorB, matrixC, vectorXCurrent, vectorXFollow, vectorY, n);
+    MAllocateBuffer(vectorBuffer, n);
 
-    MCalculations();
+    ReadData(fileNameMatrixA, fileNameVectorB, fileNameVectorX0, matrixA, vectorB, vectorXCurrent, n);
+    
+    MCalculations(matrixA, vectorB, matrixC, vectorXCurrent, vectorXFollow, vectorY, vectorBuffer, n);
 
-    MWriteData();
+    MWriteData(fileNameMatrixC, fileNameVectorX, fileNameVectorY, matrixC, vectorXCurrent, vectorY, n);
 
-    MFreeMemory();
-    MFreeBuffer();
+    MFreeMemory(matrixA, vectorB, matrixC, vectorXCurrent, vectorXFollow, vectorY, n);
+    MFreeBuffer(vectorBuffer, n);
+
     return 0;
 }

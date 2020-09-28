@@ -1,2 +1,2 @@
 all:
-    main.cpp
+	g++ main.cpp basic.cpp MatrixFunctions.cpp Molochkov.cpp
