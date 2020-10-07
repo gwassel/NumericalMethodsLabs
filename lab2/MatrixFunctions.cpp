@@ -1,6 +1,6 @@
 #include "header.hpp"
 
-void MatrixMult(double** &matrixLeft, double** &matrixRight, double** &matrixResult, const size_t n)
+void MatrixMult(const double* const* matrixLeft, const double* const* matrixRight, double** &matrixResult, const size_t n)
 {
     for(int i = 0; i < n; ++i)
     {
@@ -16,7 +16,7 @@ void MatrixMult(double** &matrixLeft, double** &matrixRight, double** &matrixRes
     }
 }
 
-void MatrixMult(double** &matrix, double* &vector, double* &vectorResult, const size_t n)
+void MatrixMult(const double* const* matrix, const double* vector, double* &vectorResult, const size_t n)
 {
     for(int i = 0; i < n; ++i)
     {
@@ -29,7 +29,7 @@ void MatrixMult(double** &matrix, double* &vector, double* &vectorResult, const 
     }
 }
 
-void MatrixCopy(double** &matrixPaste, double** &matrixCopy, const size_t n)
+void MatrixCopy(double** &matrixPaste, const double* const* matrixCopy, const size_t n)
 {
     for(int i = 0; i < n; ++i)
     {
@@ -59,7 +59,7 @@ void VectorDot(double* &vector, const double number, const size_t n)
     }
 }
 
-void VectorCopy(double* &vectorPaste, double* &vectorCopy, const size_t n)
+void VectorCopy(double* &vectorPaste, const double* vectorCopy, const size_t n)
 {
     for(int i = 0; i < n; ++i)
     {
@@ -67,7 +67,7 @@ void VectorCopy(double* &vectorPaste, double* &vectorCopy, const size_t n)
     }
 }
 
-void VectorAdd(double* &vectorLeft, double* &vectorRight, double* &vectorResult, const size_t n)
+void VectorAdd(const double* vectorLeft, const double* vectorRight, double* &vectorResult, const size_t n)
 {
     for(int i = 0; i < n; ++i)
     {
@@ -75,7 +75,7 @@ void VectorAdd(double* &vectorLeft, double* &vectorRight, double* &vectorResult,
     }    
 }
 
-void VectorDiff(double* &vectorLeft, double* &vectorRight, double* &vectorResult, const size_t n)
+void VectorDiff(const double* vectorLeft, const double* vectorRight, double* &vectorResult, const size_t n)
 {
     for(int i = 0; i < n; ++i)
     {
@@ -102,7 +102,7 @@ void MatrixEDiff(double** &matrix, const size_t n)
     }
 }
 
-double CubicVectorNorm(double* &vector, const size_t n)
+double CubicVectorNorm(const double* vector, const size_t n)
 {
     double sum = 0;
 
@@ -114,7 +114,7 @@ double CubicVectorNorm(double* &vector, const size_t n)
     return sum;
 }
 
-double CubicMatrixNorm(double** &matrix, const size_t n)
+double CubicMatrixNorm(const double* const* matrix, const size_t n)
 {
     double sum = 0;
     double maxSum = 0;
@@ -139,10 +139,4 @@ double CubicMatrixNorm(double** &matrix, const size_t n)
     
     return sum;
 }
-
-
-
-
-
-
 

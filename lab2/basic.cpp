@@ -1,6 +1,33 @@
 #include "header.hpp"
 
-void ReadInit(const std::string path){}
+void ReadInit(const std::string path, std::string &folderInput, std::string &fileNameMatrixA, std::string &fileNameVectorB, std::string &fileNameVectorX0, std::string &folderOutput, std::string &folderTest, std::string &fileTestJacobiA, std::string &fileTestJacobiB, std::string &fileTestTrueSolve, std::string &fileTestJacobiInitApprox, double &thau, double &epsilon, size_t &n)
+{
+    std::ifstream fileJsonInput;
+    fileJsonInput.open(path);
+
+    json objJson;
+    fileJsonInput >> objJson;
+
+    fileJsonInput.close();
+
+    folderInput = objJson["folderInput"];
+    fileNameMatrixA = objJson["fileNameMatrixA"];
+    fileNameVectorB = objJson["fileNameVectorB"];
+    fileNameVectorX0 = objJson["fileNameVectorX0"];
+
+    folderOutput = objJson["folderOutput"];
+    
+    folderTest = objJson["folderTest"];
+    fileTestJacobiA = objJson["fileTestJacobiMatrixA"];
+    fileTestJacobiB = objJson["fileTestJacobiVectorB"];
+    fileTestTrueSolve = objJson["fileTestJacobiTrueSolve"];
+    fileTestJacobiInitApprox = objJson["fileTestJacobiInitApprox"];
+
+    thau = objJson["thau"];
+    epsilon = objJson["epsilon"];
+
+    n = objJson["n"];
+}
 
 void AllocateMemory(double** &matrix, const size_t n)
 {
@@ -119,11 +146,15 @@ void ReadVector(std::string fileNameVector, double* &vector, const size_t n)
     }
 }
 
-void ReadData(std::string fileNameMatrixA, std::string fileNameVectorB, std::string fileNameVectorX0, double** &matrixA, double* &vectorB, double* &vectorX0, const size_t n)
+void ReadData(const std::string folder, const std::string fileNameMatrixA, const std::string fileNameVectorB, const std::string fileNameVectorX0, double** &matrixA, double* &vectorB, double* &vectorX0, const size_t n)
 {
-    ReadMatrix(fileNameMatrixA, matrixA, n);
-    ReadVector(fileNameVectorB, vectorB, n);
-    ReadVector(fileNameVectorX0, vectorX0, n);
+    std::string pathMatrixA = folder + fileNameMatrixA;
+    std::string pathVectorB = folder + fileNameVectorB;
+    std::string pathVectorX0 = folder + fileNameVectorX0;
+    
+    ReadMatrix(pathMatrixA, matrixA, n);
+    ReadVector(pathVectorB, vectorB, n);
+    ReadVector(pathVectorX0, vectorX0, n);
 }
 
 void WriteMatrix(const std::string fileNameOutput, double** &matrix, const size_t n)
@@ -152,8 +183,12 @@ void WriteVector(const std::string fileNameOutput, double* &vector, const size_t
     }
 }
 
-void MWriteData(std::string fileNameMatrixC, std::string fileNameVectorX, std::string fileNameVectorY, double** &matrixC, double* &vectorX, double* &vectorY, const size_t n)
+void MWriteData(const std::string folderOutput, double** &matrixC, double* &vectorX, double* &vectorY, const size_t n)
 {
+    std::string fileNameMatrixC = folderOutput + "matrixC";
+    std::string fileNameVectorX = folderOutput + "vectorX";
+    std::string fileNameVectorY = folderOutput + "vectorY";
+
     WriteMatrix(fileNameMatrixC, matrixC, n);
     WriteVector(fileNameVectorX, vectorX, n);
     WriteVector(fileNameVectorY, vectorY, n);

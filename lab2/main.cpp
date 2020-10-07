@@ -2,21 +2,37 @@
 
 int main()
 {
-    int n = 4;
+    size_t n = 4;
 
     //input data
     double** matrixA = nullptr;
     double* vectorB = nullptr;
-
+    
+    double thau = 0.1;
+    double epsilon = 0.01;
+    
     //input files names
     const std::string FILE_NAME_CFG = "cfg/config.json";
-    std::string fileNameMatrixA = "data2/matrix.dat";
-    std::string fileNameVectorB = "data2/vector.dat";
-    std::string fileNameVectorX0 = "data2/init_approx";
 
-    std::string fileNameMatrixC = "results/C";
-    std::string fileNameVectorX = "results/X";
-    std::string fileNameVectorY = "results/Y";
+    std::string folderInput = "data/";
+    std::string fileNameMatrixA = "matrix.dat";
+    std::string fileNameVectorB = "vector.dat";
+    std::string fileNameVectorX0 = "init_approx";
+
+    std::string folderOutput = "results/";
+    
+    //test
+    std::string folderTest = "test/";
+    std::string testA = "";
+    std::string testB = "";
+    std::string testSolve = "";
+    std::string testInitApprox = "";
+
+    double** matrixAT = nullptr;
+    double* vectorBT = nullptr;
+    double* vectorSolveT = nullptr;
+    double* vectorSolveApprox = nullptr;
+    
 
     //MData
     double** matrixC = nullptr;
@@ -28,16 +44,16 @@ int main()
     double* vectorBuffer = nullptr;
 
 
-//    ReadInit();
+    ReadInit(FILE_NAME_CFG, folderInput, fileNameMatrixA, fileNameVectorB, fileNameVectorX0, folderOutput, folderTest, testA, testB, testSolve, testInitApprox, thau, epsilon, n);
 
     MAllocateMemory(matrixA, vectorB, matrixC, vectorXCurrent, vectorXFollow, vectorY, n);
     MAllocateBuffer(vectorBuffer, n);
 
-    ReadData(fileNameMatrixA, fileNameVectorB, fileNameVectorX0, matrixA, vectorB, vectorXCurrent, n);
+    ReadData(folderInput, fileNameMatrixA, fileNameVectorB, fileNameVectorX0, matrixA, vectorB, vectorXCurrent, n);
     
-    MCalculations(matrixA, vectorB, matrixC, vectorXCurrent, vectorXFollow, vectorY, vectorBuffer, n);
+    MCalculations(matrixA, vectorB, matrixC, vectorXCurrent, vectorXFollow, vectorY, vectorBuffer, thau, epsilon, n);
 
-    MWriteData(fileNameMatrixC, fileNameVectorX, fileNameVectorY, matrixC, vectorXCurrent, vectorY, n);
+    MWriteData(folderOutput, matrixC, vectorXCurrent, vectorY, n);
 
     MFreeMemory(matrixA, vectorB, matrixC, vectorXCurrent, vectorXFollow, vectorY, n);
     MFreeBuffer(vectorBuffer, n);
