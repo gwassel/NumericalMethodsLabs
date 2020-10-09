@@ -8,8 +8,8 @@ int main()
     double** matrixA = nullptr;
     double* vectorB = nullptr;
     
-    double thau = 0.1;
-    double epsilon = 0.0001;
+    double thau = 0;
+    double epsilon = 0;
     
     //input files names
     const std::string FILE_NAME_CFG = "cfg/config.json";

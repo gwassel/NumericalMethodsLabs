@@ -25,8 +25,9 @@ void GetCY_SimpleIter(const double* const* matrixA, const double* vectorB, const
     std::cout << "norm C: " << CubicMatrixNorm(matrixC, n) << "\n";
 }
 
-void GetCY_Jacobi(const double* const* matrixA, const double* vectorB, const double thau, double** &matrixC, double* &vectorY, const size_t n)
+void GetCY_Jacobi(const double* const* matrixA, const double* vectorB, double** &matrixC, double* &vectorY, const size_t n)
 {
+    std::cout << "GetCY Jacobi\n";
     for(int i = 0; i < n; ++i)
     {
         double Aii = matrixA[i][i];
@@ -38,12 +39,12 @@ void GetCY_Jacobi(const double* const* matrixA, const double* vectorB, const dou
             }
             else
             {
-                matrixC[i][j] = matrixA[i][j] / Aii;
-                
+                matrixC[i][j] = -matrixA[i][j] / Aii;
             }
         }
         vectorY[i] = vectorB[i] / Aii;
     }
+    std::cout << "norm C: " << CubicMatrixNorm(matrixC, n) << "\n";
 }
 
 void Iterations(const double* const* matrixC, double* &vectorXCurrent, double* &vectorXFollow, const double* vectorY, double* &vectorBuffer, const double epsilon, const size_t n)
@@ -55,18 +56,18 @@ void Iterations(const double* const* matrixC, double* &vectorXCurrent, double* &
 
     do
     {
-    //     std::cout << "\niteration number = " << iterationNumber << "\n\n";
-    iterationNumber++;
+        std::cout << "\niteration number = " << iterationNumber << "\n\n";
+        iterationNumber++;
 
         VectorCopy(vectorXCurrent, vectorXFollow, n); // Xk=Xk+1
         MatrixMult(matrixC, vectorXCurrent, vectorBuffer, n); // Cx
-    //     LogVector("Cx:", vectorBuffer, n); 
+        LogVector("Cx:", vectorBuffer, n); 
 
 
         VectorAdd(vectorBuffer, vectorY, vectorXFollow, n); // Xk+1 = Cxk + y
 
-    //     LogVector("X:", vectorXCurrent, n);
-    //     LogVector("Xnext:", vectorXFollow, n);
+        LogVector("X:", vectorXCurrent, n);
+        LogVector("Xnext:", vectorXFollow, n);
     }
     while(!IfStop(matrixC, vectorXCurrent, vectorXFollow, vectorBuffer, epsilon, n) && iterationNumber < 100000);
     LogVector("x:", vectorXCurrent, n);
@@ -76,8 +77,8 @@ void Iterations(const double* const* matrixC, double* &vectorXCurrent, double* &
 void MCalculations(const double* const* matrixA, const double* vectorB, double** &matrixC, double* &vectorXCurrent, double* &vectorXFollow, double* &vectorY, double* &vectorBuffer, const double thau, const double epsilon, const size_t n)
 {
     std::cout << "MCalculations\n";
-    GetCY_SimpleIter(matrixA, vectorB, thau, matrixC, vectorY, n);
-    //GetCY_Jacobi(matrixA, vectorB);
+    //GetCY_SimpleIter(matrixA, vectorB, thau, matrixC, vectorY, n);
+    GetCY_Jacobi(matrixA, vectorB, matrixC, vectorY, n);
     Iterations(matrixC, vectorXCurrent, vectorXFollow, vectorY, vectorBuffer, epsilon, n);
 }
 
