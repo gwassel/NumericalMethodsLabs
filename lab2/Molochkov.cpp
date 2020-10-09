@@ -68,8 +68,9 @@ void Iterations(const double* const* matrixC, double* &vectorXCurrent, double* &
     //     LogVector("X:", vectorXCurrent, n);
     //     LogVector("Xnext:", vectorXFollow, n);
     }
-    while(!IfStop(matrixC, vectorXCurrent, vectorXFollow, vectorBuffer, epsilon, n) && iterationNumber < 1000);
+    while(!IfStop(matrixC, vectorXCurrent, vectorXFollow, vectorBuffer, epsilon, n) && iterationNumber < 100000);
     LogVector("x:", vectorXCurrent, n);
+    std::cout << "iterations: " << iterationNumber << "\n";
 }
 
 void MCalculations(const double* const* matrixA, const double* vectorB, double** &matrixC, double* &vectorXCurrent, double* &vectorXFollow, double* &vectorY, double* &vectorBuffer, const double thau, const double epsilon, const size_t n)

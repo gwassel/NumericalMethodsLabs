@@ -9,7 +9,7 @@ int main()
     double* vectorB = nullptr;
     
     double thau = 0.1;
-    double epsilon = 0.01;
+    double epsilon = 0.0001;
     
     //input files names
     const std::string FILE_NAME_CFG = "cfg/config.json";
