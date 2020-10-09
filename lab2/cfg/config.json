@@ -11,6 +11,6 @@
     "fileTestJacobiTrueSolve": "j_solve_",
     "fileTestJacobiInitApprox": "j_init_approx_",
     "thau": 1e-3,
-    "epsilon": 1e-7,
+    "epsilon": 1e-4,
     "n": 4
 }

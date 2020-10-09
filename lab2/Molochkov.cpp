@@ -25,6 +25,14 @@ void GetCY_SimpleIter(const double* const* matrixA, const double* vectorB, const
     std::cout << "norm C: " << CubicMatrixNorm(matrixC, n) << "\n";
 }
 
+double ResidualNorm(const double* const* matrixA, const double* vectorB, const double* vectorX, double* &vectorBuffer1, double* &vectorBuffer2, const size_t n)
+{
+    MatrixMult(matrixA, vectorX, vectorBuffer1, n);
+    VectorDiff(vectorBuffer1, vectorB, vectorBuffer2, n);
+    
+    return CubicVectorNorm(vectorBuffer2, n);
+}
+
 void GetCY_Jacobi(const double* const* matrixA, const double* vectorB, double** &matrixC, double* &vectorY, const size_t n)
 {
     std::cout << "GetCY Jacobi\n";
@@ -56,18 +64,18 @@ void Iterations(const double* const* matrixC, double* &vectorXCurrent, double* &
 
     do
     {
-        std::cout << "\niteration number = " << iterationNumber << "\n\n";
+//        std::cout << "\niteration number = " << iterationNumber << "\n\n";
         iterationNumber++;
 
         VectorCopy(vectorXCurrent, vectorXFollow, n); // Xk=Xk+1
         MatrixMult(matrixC, vectorXCurrent, vectorBuffer, n); // Cx
-        LogVector("Cx:", vectorBuffer, n); 
+//        LogVector("Cx:", vectorBuffer, n); 
 
 
         VectorAdd(vectorBuffer, vectorY, vectorXFollow, n); // Xk+1 = Cxk + y
 
-        LogVector("X:", vectorXCurrent, n);
-        LogVector("Xnext:", vectorXFollow, n);
+//        LogVector("X:", vectorXCurrent, n);
+//        LogVector("Xnext:", vectorXFollow, n);
     }
     while(!IfStop(matrixC, vectorXCurrent, vectorXFollow, vectorBuffer, epsilon, n) && iterationNumber < 100000);
     LogVector("x:", vectorXCurrent, n);
@@ -80,7 +88,6 @@ void MCalculations(const double* const* matrixA, const double* vectorB, double**
     //GetCY_SimpleIter(matrixA, vectorB, thau, matrixC, vectorY, n);
     GetCY_Jacobi(matrixA, vectorB, matrixC, vectorY, n);
     Iterations(matrixC, vectorXCurrent, vectorXFollow, vectorY, vectorBuffer, epsilon, n);
+    std::cout << "res norm: " << ResidualNorm(matrixA, vectorB, vectorXCurrent, vectorBuffer, vectorXFollow, n) << "\n";
 }
-
-
 
