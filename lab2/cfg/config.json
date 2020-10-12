@@ -1,0 +1,16 @@
+{
+    "folderInput": "data/",
+    "fileNameMatrixA": "matrix.dat",
+    "fileNameVectorB": "vector.dat",
+    "fileNameVectorX0": "init_approx",
+    "folderOutput": "results/",
+    "folderTest": "test/",
+    "tests": 2,
+    "fileTestJacobiMatrixA": "j_matrix_",
+    "fileTestJacobiVectorB": "j_vector_",
+    "fileTestJacobiTrueSolve": "j_solve_",
+    "fileTestJacobiInitApprox": "j_init_approx_",
+    "thau": 1e-3,
+    "epsilon": 1e-4,
+    "n": 4
+}
