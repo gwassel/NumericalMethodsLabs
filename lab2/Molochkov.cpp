@@ -1,15 +1,14 @@
 #include "header.hpp"
 
-bool IfStop(const double* const* matrixC, const double* vectorXCurrent, const double* vectorXFollow, double* &vectorBuffer, const double epsilon, const size_t n)
+bool IfStop(const double* vectorXCurrent, const double* vectorXFollow, double* &vectorBuffer, const double epsilon1, const size_t n)
 {
     // std::cout << "IfStop\n";
     VectorDiff(vectorXCurrent, vectorXFollow, vectorBuffer, n);
     double normDeltaX = CubicVectorNorm(vectorBuffer, n);
-    double normC = CubicMatrixNorm(matrixC, n);
 
     // std::cout << "normdX = " << normDeltaX << " normC = " << normC << "\n";
 
-    bool ifStop = (normDeltaX <= (1 - normC) / normC * epsilon);
+    bool ifStop = (normDeltaX <= epsilon1);
     // std::cout << ifStop << "\n";
     return ifStop;
 }
@@ -60,6 +59,9 @@ void Iterations(const double* const* matrixC, double* &vectorXCurrent, double* &
     VectorCopy(vectorXFollow, vectorXCurrent, n);
     std::cout << "Iterations\n";
     
+    const double normC = CubicMatrixNorm(matrixC, n);
+    const double epsilon1 = (1 - normC) / normC * epsilon;
+
     int iterationNumber = 1;
 
     do
@@ -77,7 +79,7 @@ void Iterations(const double* const* matrixC, double* &vectorXCurrent, double* &
 //        LogVector("X:", vectorXCurrent, n);
 //        LogVector("Xnext:", vectorXFollow, n);
     }
-    while(!IfStop(matrixC, vectorXCurrent, vectorXFollow, vectorBuffer, epsilon, n) && iterationNumber < 100000);
+    while(!IfStop(vectorXCurrent, vectorXFollow, vectorBuffer, epsilon1, n) && iterationNumber < 100000);
     LogVector("x:", vectorXCurrent, n);
     std::cout << "iterations: " << iterationNumber << "\n";
 }
