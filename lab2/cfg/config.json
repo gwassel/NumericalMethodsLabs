@@ -10,7 +10,7 @@
     "fileTestJacobiVectorB": "j_vector_",
     "fileTestJacobiTrueSolve": "j_solve_",
     "fileTestJacobiInitApprox": "j_init_approx_",
-    "thau": 1e-3,
+    "thau": 0.014,
     "epsilon": 1e-4,
     "n": 4
 }
