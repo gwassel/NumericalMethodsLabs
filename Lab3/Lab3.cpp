@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include "EmelinHeads.h"
+#include <nlohmann/json.hpp>
 #define my_type double
 
 int main()
@@ -27,18 +28,16 @@ int main()
     my_type* EvectorBuffer;
     my_type* EvectorLambda;
 
+    nlohmann::json Ej;
+    std::ifstream Efile("menu/Econfig.json");
+    const int ESYSTEM = 0;
+    Efile >> Ej;
 
-    const std::string EpathData = "data/";
+    const std::string EfileNameMatrix = Ej[ESYSTEM]["package_init"].get<std::string>() + Ej[ESYSTEM]["matrix_init_name"].get<std::string>();
 
-    std::string EfileNameMatrix;
-    std::string EfileNameVector;
-    std::string EfolderName;
-
-    EfileNameMatrix = EpathData + "Ematrix1.txt";
-    EfileNameVector = EpathData + "Evector1.txt";
-
-    const std::string EfileMatrixEVecName = "res/matrixEVec1.txt";
-    const std::string EfileMatrixEValName = "res/matrixEVal1.txt";
+    const std::string EfileMatrixEVecName = Ej[ESYSTEM]["package_res"].get<std::string>() + Ej[ESYSTEM]["eigen_vectors_file_res_name"].get<std::string>();
+    const std::string EfileMatrixEValName = Ej[ESYSTEM]["package_res"].get<std::string>() + Ej[ESYSTEM]["eigen_values_file_res_name"].get<std::string>();
+    
     //Убрать на случай другой системы лямбда
     EAllocateMemory(EmatrixA,EvectorX1,EvectorX2,EvectorLambda,EvectorBstar,EvectorBuffer,EmatrixBuffer1,
                     EmatrixBuffer2,EmatrixT,EmatrixQ,EmatrixR,EmatrixEigenVectors,EmatrixC,Esize);

@@ -1,0 +1,17 @@
+[
+	{
+		"package_init": "data/",
+		"package_res": "res/",
+		"matrix_init_name": "Ematrix1.txt",
+		"eigen_vectors_file_res_name": "EmatrixVec1.txt",
+		"eigen_values_file_res_name": "EvectorVal1.txt"
+
+	},
+	{
+		"package_init": "data/",
+		"package_res": "res/",
+		"matrix_init_name": "Ematrix2.txt",
+		"eigen_vectors_file_res_name": "EmatrixVec2.txt",
+		"eigen_values_file_res_name": "EvectorVal2.txt"
+	}
+]
