@@ -4,6 +4,7 @@
 #include <string>
 #include "EmelinHeads.h"
 #define my_type double
+my_type epsilon = 1e-6;
 
 int EAllocateMemory(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, my_type*& lambda, my_type*& vectorBstar,
                     my_type*& vectorBuffer, my_type**& matrixBuffer1, my_type**& matrixBuffer2, my_type**& matrixT,
@@ -96,9 +97,14 @@ void ECalculations(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, m
     my_type*& vectorBuffer, my_type**& matrixBuffer1, my_type**& matrixBuffer2, my_type**& matrixT,
     my_type**& matrixQ, my_type**& matrixR, my_type**& matrixEigenVectors, my_type**& matrixC,
     const int size) {
+    std::cout << "Epsilon: " << epsilon << std::endl;
+    std::cout << std::endl;
+
     //Вывод исходных собственных чисел
     EprintVector(lambda, size, "Eigen values(init): ");
     my_type normY = 0.0;
+    my_type lambdaPrev;
+    int counter;
     //Алгоритм 
     for (int k = 0; k < size; k++) {
         //Первая итерация с приближенным лямбда
@@ -116,7 +122,8 @@ void ECalculations(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, m
             matrixC[i][i] -= lambda[k];
         }
         //Решаем систему
-        EQRCalculations(matrixC, matrixT, matrixQ, matrixR, vectorX1, vectorX2, matrixBuffer1, matrixBuffer2, vectorBstar, size);
+        EQRCalculations(matrixC, matrixT, matrixQ, matrixR, vectorX1, vectorX2, matrixBuffer1, matrixBuffer2,
+                        vectorBstar, size);
 
         //Нормируем
         normY = 0.0;
@@ -125,18 +132,16 @@ void ECalculations(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, m
         }
         normY = sqrt(normY);
 
-        //Меняем местами вектора
         for (int i = 0; i < size; i++) {
             vectorX2[i] /= normY;
         }
-        for (int i = 0; i < size; i++) {
-            normY = vectorX2[i];
-            vectorX2[i] = vectorX1[i];
-            vectorX1[i] = normY;
-        }
-
+        //Меняем местами вектора
+        std::swap(vectorX1, vectorX2);
+        counter = 1;
         //То же самое в цикле
-        for (int i = 0; i < 100; i++) {
+        do{
+            counter++;
+            lambdaPrev = lambda[k];
             //Ищем собстсвенное число
             EMatrixMultVector(matrixA, vectorX1, vectorBuffer, size);
             lambda[k] = EVectorMultVector(vectorBuffer, vectorX1, size);
@@ -161,16 +166,14 @@ void ECalculations(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, m
             for (int i = 0; i < size; i++) {
                 vectorX2[i] /= normY;
             }
-            for (int i = 0; i < size; i++) {
-                normY = vectorX2[i];
-                vectorX2[i] = vectorX1[i];
-                vectorX1[i] = normY;
-            }
-        }
+            std::swap(vectorX1, vectorX2);
+        } while (fabs(lambdaPrev - lambda[k]) > epsilon);
+        std::cout << "Iterations for lambda[" << k << "]: " << counter << std::endl;
         for (int i = 0; i < size; i++) {
             matrixEigenVectors[i][k] = vectorX1[i];
         }
     }
+    std::cout << std::endl;
     EprintVector(lambda,size,"Eigen values(res): ");
     EprintMatrix(matrixEigenVectors,size,"Eigen vectors: ");
 }
