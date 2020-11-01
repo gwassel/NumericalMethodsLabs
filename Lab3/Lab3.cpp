@@ -6,7 +6,7 @@
 #include "EmelinHeads.h"
 #include <nlohmann/json.hpp>
 #define my_type double
-
+//SEV - searching eigen values
 int main()
 {
     std::cout << "--------------------------------------------------------Emelin-------------------------------------------------------" << std::endl;
@@ -34,20 +34,20 @@ int main()
     Efile >> Ej;
 
     const std::string EfileNameMatrix = Ej[ESYSTEM]["package_init"].get<std::string>() + Ej[ESYSTEM]["matrix_init_name"].get<std::string>();
+    const std::string EfileNameEigenValsInit = Ej[ESYSTEM]["package_init"].get<std::string>() + Ej[ESYSTEM]["eigen_values_file_init_name"].get<std::string>();
 
     const std::string EfileMatrixEVecName = Ej[ESYSTEM]["package_res"].get<std::string>() + Ej[ESYSTEM]["eigen_vectors_file_res_name"].get<std::string>();
     const std::string EfileMatrixEValName = Ej[ESYSTEM]["package_res"].get<std::string>() + Ej[ESYSTEM]["eigen_values_file_res_name"].get<std::string>();
     
-    //Убрать на случай другой системы лямбда
     EAllocateMemory(EmatrixA,EvectorX1,EvectorX2,EvectorLambda,EvectorBstar,EvectorBuffer,EmatrixBuffer1,
                     EmatrixBuffer2,EmatrixT,EmatrixQ,EmatrixR,EmatrixEigenVectors,EmatrixC,Esize);
 
-    EReadData(EfileNameMatrix, EmatrixA, Esize);
+    EReadData(EfileNameMatrix, EfileNameEigenValsInit, EmatrixA, EvectorLambda, Esize);
 
     ECalculations(EmatrixA, EvectorX1, EvectorX2, EvectorLambda, EvectorBstar, EvectorBuffer, EmatrixBuffer1, EmatrixBuffer2,
         EmatrixT, EmatrixQ, EmatrixR, EmatrixEigenVectors, EmatrixC, Esize);
-    //Исправить, не тот массив 
-    EWriteData(EfileMatrixEVecName, EfileMatrixEValName, EmatrixA, EvectorLambda, Esize);
+
+    EWriteData(EfileMatrixEVecName, EfileMatrixEValName, EmatrixEigenVectors, EvectorLambda, Esize);
 
     EFreeMemory(EmatrixA, EvectorX1, EvectorX2, EvectorLambda, EvectorBstar, EvectorBuffer, EmatrixBuffer1, EmatrixBuffer2,
         EmatrixT, EmatrixQ, EmatrixR, EmatrixEigenVectors, EmatrixC, Esize);

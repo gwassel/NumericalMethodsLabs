@@ -18,12 +18,6 @@ int EAllocateMemory(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, 
     vectorX2 = new my_type[size]{};
     lambda = new my_type[size]{};
 
-    //Убрать на случай другой системы
-    lambda[0] = 0.8;
-    lambda[1] = 1.8;
-    lambda[2] = 2.8;
-    lambda[3] = 3.8;
-
     vectorBstar = new my_type[size]{};
 
     vectorBuffer = new my_type[size]{};
@@ -63,7 +57,7 @@ int EAllocateMemory(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, 
 
     return 0;
 }
-int EReadData(const std::string fileNameMatrix, my_type**& matrixA, const int size) {
+int EReadData(const std::string fileNameMatrix, const std::string fileNameEigenValsInit, my_type**& matrixA, my_type*& lambda, const int size) {
     std::ifstream matrixFile;
     matrixFile.open(fileNameMatrix);
 
@@ -80,14 +74,30 @@ int EReadData(const std::string fileNameMatrix, my_type**& matrixA, const int si
             matrixFile >> matrixA[i][j];
         }
     }
-
     matrixFile.close();
+
+    matrixFile.open(fileNameEigenValsInit);
+
+    if (!matrixFile.is_open())
+    {
+        std::cerr << "Error: file with fileNameEigenValsInit is not open\n";
+        return 1;
+    }
+
+    for (int i = 0; i < size; i++)
+    {
+            matrixFile >> lambda[i];
+    }
+    matrixFile.close();
+
     return 0;
 }
 void ECalculations(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, my_type*& lambda, my_type*& vectorBstar,
     my_type*& vectorBuffer, my_type**& matrixBuffer1, my_type**& matrixBuffer2, my_type**& matrixT,
     my_type**& matrixQ, my_type**& matrixR, my_type**& matrixEigenVectors, my_type**& matrixC,
     const int size) {
+    //Вывод исходных собственных чисел
+    EprintVector(lambda, size, "Eigen values(init): ");
     my_type normY = 0.0;
     //Алгоритм 
     for (int k = 0; k < size; k++) {
@@ -157,13 +167,12 @@ void ECalculations(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, m
                 vectorX1[i] = normY;
             }
         }
-        std::cout <<"Lambda_"<<k<<" "<< lambda[k] << std::endl;
-        EprintVector(vectorX1, size, "Vector" + k);
         for (int i = 0; i < size; i++) {
             matrixEigenVectors[i][k] = vectorX1[i];
         }
     }
-    EprintMatrix(matrixEigenVectors,size,"EV");
+    EprintVector(lambda,size,"Eigen values(res): ");
+    EprintMatrix(matrixEigenVectors,size,"Eigen vectors: ");
 }
 int EWriteData(std::string fileNameEVec, std::string fileNameEVal, my_type**& matrixEVec,
                my_type*& vectorEVals, const int& size) {

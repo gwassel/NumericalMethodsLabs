@@ -10,7 +10,7 @@ int EAllocateMemory(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, 
     my_type*& vectorBuffer, my_type**& matrixBuffer1, my_type**& matrixBuffer2, my_type**& matrixT,
     my_type**& matrixQ, my_type**& matrixR, my_type**& matrixEigenVectors, my_type**& matrixC,
     const int size);
-int EReadData(const std::string fileNameMatrix, my_type**& A, const int size);
+int EReadData(const std::string fileNameMatrix, const std::string fileNameEigenValsInit, my_type**& A, my_type*& lambda, const int size);
 void ECalculations(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, my_type*& lambda, my_type*& vectorBstar,
     my_type*& vectorBuffer, my_type**& matrixBuffer1, my_type**& matrixBuffer2, my_type**& matrixT,
     my_type**& matrixQ, my_type**& matrixR, my_type**& matrixEigenVectors, my_type**& matrixC,
