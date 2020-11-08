@@ -48,21 +48,10 @@ int main()
 
     HessenbergForm(matrixA, matrixH, n);
     
-    for(int i = 0; i < n; ++i)
-    {
-        for(int j = 0; j < n; ++j)
-            std::cout << matrixA[i][j] << " ";
-        std::cout << "\n";
-    }
+    PrintMatrix(A, n, "matrix A");
+    PrintMatrix(H, n, "matrixH");
 
-    std::cout << "\n";
-
-    for(int i = 0; i < n; ++i)
-    {
-        for(int j = 0; j < n; ++j)
-            std::cout << matrixH[i][j] << " ";
-        std::cout << "\n";
-    }
+    
 
 
     std::cout << "--------------------------------------------------------Emelin-------------------------------------------------------" << std::endl;
