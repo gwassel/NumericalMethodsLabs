@@ -1,54 +1,49 @@
-#include <iostream>
-#include <math.h>
-#include <fstream>
-#include <string>
-#include "EmelinHeads.h"
-#define my_type double
-my_type epsilon = 1e-6;
+#include "Header.hpp"
+const double epsilon = 1e-6;
 
-int EAllocateMemory(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, my_type*& lambda, my_type*& vectorBstar,
-                    my_type*& vectorBuffer, my_type**& matrixBuffer1, my_type**& matrixBuffer2, my_type**& matrixT,
-                    my_type**& matrixQ, my_type**& matrixR, my_type**& matrixEigenVectors, my_type**& matrixC,
+int EAllocateMemory(double**& matrixA, double*& vectorX1, double*& vectorX2, double*& lambda, double*& vectorBstar,
+                    double*& vectorBuffer, double**& matrixBuffer1, double**& matrixBuffer2, double**& matrixT,
+                    double**& matrixQ, double**& matrixR, double**& matrixEigenVectors, double**& matrixC,
                     const int size) {
-    matrixA = new my_type * [size];
+    matrixA = new double * [size];
     for (int i = 0; i < size; i++) {
-        matrixA[i] = new my_type[size]{};
+        matrixA[i] = new double[size]{};
     }
 
-    vectorX1 = new my_type[size]{};
-    vectorX2 = new my_type[size]{};
-    lambda = new my_type[size]{};
+    vectorX1 = new double[size]{};
+    vectorX2 = new double[size]{};
+    lambda = new double[size]{};
 
-    vectorBstar = new my_type[size]{};
+    vectorBstar = new double[size]{};
 
-    vectorBuffer = new my_type[size]{};
-    matrixBuffer1 = new my_type * [size];
+    vectorBuffer = new double[size]{};
+    matrixBuffer1 = new double * [size];
     for (int i = 0; i < size; ++i) {
-        matrixBuffer1[i] = new my_type[size]{};
+        matrixBuffer1[i] = new double[size]{};
     }
-    matrixBuffer2 = new my_type * [size];
+    matrixBuffer2 = new double * [size];
     for (int i = 0; i < size; ++i) {
-        matrixBuffer2[i] = new my_type[size]{};
+        matrixBuffer2[i] = new double[size]{};
     }
-    matrixT = new my_type * [size];
+    matrixT = new double * [size];
     for (int i = 0; i < size; ++i) {
-        matrixT[i] = new my_type[size]{};
+        matrixT[i] = new double[size]{};
     }
-    matrixQ = new my_type * [size];
+    matrixQ = new double * [size];
     for (int i = 0; i < size; ++i) {
-        matrixQ[i] = new my_type[size]{};
+        matrixQ[i] = new double[size]{};
     }
-    matrixR = new my_type * [size];
+    matrixR = new double * [size];
     for (int i = 0; i < size; ++i) {
-        matrixR[i] = new my_type[size]{};
+        matrixR[i] = new double[size]{};
     }
-    matrixEigenVectors = new my_type * [size];
+    matrixEigenVectors = new double * [size];
     for (int i = 0; i < size; ++i) {
-        matrixEigenVectors[i] = new my_type[size]{};
+        matrixEigenVectors[i] = new double[size]{};
     }
-    matrixC = new my_type * [size];
+    matrixC = new double * [size];
     for (int i = 0; i < size; ++i) {
-        matrixC[i] = new my_type[size];
+        matrixC[i] = new double[size];
     }
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
@@ -58,7 +53,7 @@ int EAllocateMemory(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, 
 
     return 0;
 }
-int EReadData(const std::string fileNameMatrix, const std::string fileNameEigenValsInit, my_type**& matrixA, my_type*& lambda, const int size) {
+int ReadData(const std::string fileNameMatrix, const std::string fileNameEigenValsInit, double**& matrixA, double*& lambda, const int size) {
     std::ifstream matrixFile;
     matrixFile.open(fileNameMatrix);
 
@@ -93,22 +88,22 @@ int EReadData(const std::string fileNameMatrix, const std::string fileNameEigenV
 
     return 0;
 }
-void ECalculations(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, my_type*& lambda, my_type*& vectorBstar,
-    my_type*& vectorBuffer, my_type**& matrixBuffer1, my_type**& matrixBuffer2, my_type**& matrixT,
-    my_type**& matrixQ, my_type**& matrixR, my_type**& matrixEigenVectors, my_type**& matrixC,
+void ECalculations(double**& matrixA, double*& vectorX1, double*& vectorX2, double*& lambda, double*& vectorBstar,
+    double*& vectorBuffer, double**& matrixBuffer1, double**& matrixBuffer2, double**& matrixT,
+    double**& matrixQ, double**& matrixR, double**& matrixEigenVectors, double**& matrixC,
     const int size) {
     std::cout << "Epsilon: " << epsilon << std::endl;
     std::cout << std::endl;
 
-    //Вывод исходных собственных чисел
-    EprintVector(lambda, size, "Eigen values(init): ");
-    my_type normY = 0.0;
-    my_type lambdaPrev;
+    //пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+    PrintVector(lambda, size, "Eigen values(init): ");
+    double normY = 0.0;
+    double lambdaPrev;
     int counter;
-    //Алгоритм 
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
     for (int k = 0; k < size; k++) {
-        //Первая итерация с приближенным лямбда
-        //Ищем лямбда
+        //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+        //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         for (int i = 0; i < size; i++) {
             vectorX1[i] = 0.0;
         }
@@ -121,11 +116,11 @@ void ECalculations(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, m
         for (int i = 0; i < size; i++) {
             matrixC[i][i] -= lambda[k];
         }
-        //Решаем систему
-        EQRCalculations(matrixC, matrixT, matrixQ, matrixR, vectorX1, vectorX2, matrixBuffer1, matrixBuffer2,
+        //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        QRCalculations(matrixC, matrixT, matrixQ, matrixR, vectorX1, vectorX2, matrixBuffer1, matrixBuffer2,
                         vectorBstar, size);
 
-        //Нормируем
+        //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         normY = 0.0;
         for (int i = 0; i < size; i++) {
             normY += vectorX2[i] * vectorX2[i];
@@ -135,16 +130,16 @@ void ECalculations(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, m
         for (int i = 0; i < size; i++) {
             vectorX2[i] /= normY;
         }
-        //Меняем местами вектора
+        //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         std::swap(vectorX1, vectorX2);
         counter = 1;
-        //То же самое в цикле
+        //пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
         do{
             counter++;
             lambdaPrev = lambda[k];
-            //Ищем собстсвенное число
-            EMatrixMultVector(matrixA, vectorX1, vectorBuffer, size);
-            lambda[k] = EVectorMultVector(vectorBuffer, vectorX1, size);
+            //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+            MatrixMultVector(matrixA, vectorX1, vectorBuffer, size);
+            lambda[k] = VectorMultVector(vectorBuffer, vectorX1, size);
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
                     matrixC[i][j] = matrixA[i][j];
@@ -154,7 +149,7 @@ void ECalculations(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, m
                 matrixC[i][i] -= lambda[k];
             }
 
-            EQRCalculations(matrixC, matrixT, matrixQ, matrixR, vectorX1, vectorX2, matrixBuffer1,
+            QRCalculations(matrixC, matrixT, matrixQ, matrixR, vectorX1, vectorX2, matrixBuffer1,
                             matrixBuffer2, vectorBstar, size);
 
             normY = 0.0;
@@ -174,21 +169,21 @@ void ECalculations(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, m
         }
     }
     std::cout << std::endl;
-    EprintVector(lambda,size,"Eigen values(res): ");
-    EprintMatrix(matrixEigenVectors,size,"Eigen vectors: ");
+    PrintVector(lambda,size,"Eigen values(res): ");
+    PrintMatrix(matrixEigenVectors,size,"Eigen vectors: ");
 }
-int EWriteData(std::string fileNameEVec, std::string fileNameEVal, my_type**& matrixEVec,
-               my_type*& vectorEVals, const int& size) {
+int EWriteData(std::string fileNameEVec, std::string fileNameEVal, double**& matrixEVec,
+               double*& vectorEVals, const int& size) {
 
-    EWriteMatrix(fileNameEVec, matrixEVec, size);
+    WriteMatrix(fileNameEVec, matrixEVec, size);
 
-    EWriteVector(fileNameEVal, vectorEVals,size);
+    WriteVector(fileNameEVal, vectorEVals,size);
 
     return 0;
 }
-int EFreeMemory(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, my_type*& lambda, my_type*& vectorBstar,
-    my_type*& vectorBuffer, my_type**& matrixBuffer1, my_type**& matrixBuffer2, my_type**& matrixT,
-    my_type**& matrixQ, my_type**& matrixR, my_type**& matrixEigenVectors, my_type**& matrixC,
+int EFreeMemory(double**& matrixA, double*& vectorX1, double*& vectorX2, double*& lambda, double*& vectorBstar,
+    double*& vectorBuffer, double**& matrixBuffer1, double**& matrixBuffer2, double**& matrixT,
+    double**& matrixQ, double**& matrixR, double**& matrixEigenVectors, double**& matrixC,
     const int size) {
 
     for (int i = 0; i < size; ++i)
@@ -237,357 +232,5 @@ int EFreeMemory(my_type**& matrixA, my_type*& vectorX1, my_type*& vectorX2, my_t
         delete[] matrixC[i];
     }
     delete[] matrixC;
-    return 0;
-}
-
-int EWriteVector(std::string fileNameOutput, my_type*& vector, const int& n)
-{
-    std::ofstream fileOutput;
-    fileOutput.open(fileNameOutput);
-
-    for (int i = 0; i < n; ++i)
-    {
-        fileOutput << vector[i] << "\n";
-    }
-    fileOutput << "\n";
-
-    fileOutput.close();
-
-    return 0;
-}
-
-int EWriteMatrix(const std::string fileNameOutput, my_type**& matrix, const int& n)
-{
-    std::ofstream fileOutput;
-    fileOutput.open(fileNameOutput);
-
-    for (int i = 0; i < n; ++i)
-    {
-        for (int j = 0; j < n; ++j) {
-            fileOutput << matrix[i][j] << " ";
-        }
-        fileOutput << "\n";
-    }
-    fileOutput << "\n";
-
-    fileOutput.close();
-
-    return 0;
-}
-
-my_type ECubicVectorNorm(my_type*& p, const int& size) {
-    my_type sum = 0.0;
-    for (int i = 0; i < size; i++) {
-        sum += fabs(p[i]);
-    }
-    return sum;
-}
-
-my_type ECubicMatrixNorm(my_type**& p, const int& size) {
-    my_type sum;
-    my_type maxSum = 0.0;
-    for (int j = 0; j < size; j++) {
-        maxSum += fabs(p[0][j]);
-    }
-    for (int i = 1; i < size; i++) {
-        sum = 0.0;
-        for (int j = 0; j < size; j++) {
-            sum += fabs(p[i][j]);
-        }
-        if (sum > maxSum)
-            maxSum = sum;
-    }
-    return maxSum;
-}
-
-void EprintMatrix(my_type**& A, const int& size, std::string s) {
-    std::cout << s << std::endl;
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            std::cout << A[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-}
-
-void EprintVector(my_type*& B, const int& size, std::string s) {
-    std::cout << s << std::endl;
-    for (int i = 0; i < size; i++) {
-        std::cout << B[i] << std::endl;
-    }
-    std::cout << std::endl;
-}
-
-
-int EMatrixMultVector(my_type**& matrix, my_type*& vector, my_type*& vectorResult, const size_t n)
-{
-    my_type sum = 0.0;
-    for (int i = 0; i < n; ++i)
-    {
-        sum = 0.0;
-        for (int j = 0; j < n; ++j)
-        {
-            sum += matrix[i][j] * vector[j];
-        }
-        vectorResult[i] = sum;
-    }
-
-    return 0;
-}
-
-int EMatrixMultMatrix(my_type**& matrixA, my_type**& matrixB, my_type**& matrixResult, const size_t n)
-{
-    for (int i = 0; i < n; ++i)
-    {
-        for (int j = 0; j < n; ++j)
-        {
-            my_type sum = 0;
-            for (int k = 0; k < n; ++k)
-            {
-                sum += matrixA[i][k] * matrixB[k][j];
-            }
-            matrixResult[i][j] = sum;
-        }
-    }
-
-    return 0;
-}
-
-my_type EVectorMultVector(my_type*& vectorX1, my_type*& vectorX2, const size_t size) {
-    my_type res = 0.0;
-    for (int i = 0; i < size; i++) {
-        res += vectorX1[i] * vectorX2[i];
-    }
-    return res;
-}
-
-
-int EMatrixMult(my_type**& matrix, my_type*& vector, my_type*& vectorResult, const size_t n)
-{
-    my_type sum = 0.0;
-    for (int i = 0; i < n; ++i)
-    {
-        sum = 0.0;
-        for (int j = 0; j < n; ++j)
-        {
-            sum += matrix[i][j] * vector[j];
-        }
-        vectorResult[i] = sum;
-    }
-
-    return 0;
-}
-
-int EMatrixMultV(my_type**& matrixA, my_type**& matrixB, my_type**& matrixResult, const size_t n)
-{
-    for (int i = 0; i < n; ++i)
-    {
-        for (int j = 0; j < n; ++j)
-        {
-            my_type sum = 0;
-            for (int k = 0; k < n; ++k)
-            {
-                sum += matrixA[i][k] * matrixB[k][j];
-            }
-            matrixResult[i][j] = sum;
-        }
-    }
-
-    return 0;
-}
-
-int EGetMatrixI(my_type**& matrix, const size_t n)
-{
-    for (int i = 0; i < n; ++i)
-    {
-        for (int j = 0; j < n; ++j)
-        {
-            if (i == j)
-            {
-                matrix[i][j] = 1;
-            }
-            else
-            {
-                matrix[i][j] = 0;
-            }
-        }
-    }
-
-    return 0;
-}
-
-int EMatrixCopy(my_type**& matrixPaste, my_type**& matrixCopy, const size_t n)
-{
-    for (int i = 0; i < n; ++i)
-    {
-        for (int j = 0; j < n; ++j)
-        {
-            matrixPaste[i][j] = matrixCopy[i][j];
-        }
-    }
-    return 0;
-}
-
-int EMatrixTranspose(my_type**& matrixInit, my_type**& matrixResult, const size_t n)
-{
-    for (int i = 0; i < n; ++i)
-    {
-        for (int j = 0; j < n; ++j)
-        {
-            matrixResult[i][j] = matrixInit[j][i];
-        }
-    }
-
-    return 0;
-}
-
-int EMatrixInverse(my_type**& matrixA, my_type**& matrixInverted, my_type**& matrixT,
-    my_type**& matrixQ, my_type**& matrixR, my_type**& matrixBuffer, my_type*& vectorB, const size_t n)
-{
-    EQRDecomposer(matrixA, matrixT, matrixQ, matrixR, matrixBuffer[0], matrixBuffer[1], vectorB, n);
-
-    EMatrixInverseTR(matrixT, matrixR, matrixInverted, matrixBuffer, n);
-
-    return 0;
-}
-
-int EMatrixInverseTR(my_type**& matrixT, my_type**& matrixR, my_type**& matrixInverted,
-    my_type**& matrixBuffer, const size_t n)
-{
-    for (int i = 0; i < n; ++i)
-    {
-        for (int j = 0; j < n; ++j)
-        {
-            matrixBuffer[0][j] = matrixT[j][i];
-        }
-
-        EReverseMotion(matrixR, matrixInverted[i], matrixBuffer[0], n);
-    }
-
-    EMatrixTranspose(matrixInverted, matrixBuffer, n);
-    EMatrixCopy(matrixInverted, matrixBuffer, n);
-
-    return 0;
-}
-
-int EQRDecomposer(my_type**& matrixA, my_type**& matrixT, my_type**& matrixQ,
-    my_type**& matrixR, my_type*& vectorBuffer1, my_type*& vectorBuffer2, my_type*& vectorB, const size_t n)
-{
-    EMatrixCopy(matrixR, matrixA, n);
-
-    EGetMatrixI(matrixT, n);
-
-    for (int i = 0; i < n - 1; ++i)
-    {
-        //тут выбор главного элемента
-        EConditionNumberQR(matrixR, matrixT, vectorB, i, n);
-
-        for (int j = i + 1; j < n; ++j)
-        {
-            my_type c = matrixR[i][i];
-            my_type s = matrixR[j][i];
-
-            my_type radical = 1 / sqrt(c * c + s * s);
-
-            c *= radical;
-            s *= radical;
-
-            for (int k = 0; k < n; ++k)
-            {
-                vectorBuffer1[k] = c * matrixR[i][k] + s * matrixR[j][k]; //matrixR[i][k]
-                vectorBuffer2[k] = (-s) * matrixR[i][k] + c * matrixR[j][k]; //matrixR[j][k]
-            }
-
-            for (int k = 0; k < n; ++k)
-            {
-                matrixR[i][k] = vectorBuffer1[k];
-                matrixR[j][k] = vectorBuffer2[k];
-            }
-
-            for (int k = 0; k < n; ++k)
-            {
-                vectorBuffer1[k] = c * matrixT[i][k] + s * matrixT[j][k];
-                vectorBuffer2[k] = (-s) * matrixT[i][k] + c * matrixT[j][k];
-            }
-
-            for (int k = 0; k < n; ++k)
-            {
-                matrixT[i][k] = vectorBuffer1[k];
-                matrixT[j][k] = vectorBuffer2[k];
-            }
-            //WriteMatrix("R", matrixR, n);
-        }
-    }
-
-    EMatrixTranspose(matrixT, matrixQ, n);
-
-    return 0;
-}
-
-int EQRCalculations(my_type**& matrixA, my_type**& matrixT, my_type**& matrixQ, my_type**& matrixR, my_type*& vectorB,
-    my_type*& vectorX, my_type**& matrixBuffer1, my_type**& matrixBuffer2,
-    my_type*& vectorBStarred, const size_t n)
-{
-    EMatrixCopy(matrixR, matrixA, n);
-    //QRDecomposer2(matrixA, matrixQ, matrixR, matrixBuffer1, matrixBuffer2, n);
-    EQRDecomposer(matrixA, matrixT, matrixQ, matrixR, matrixBuffer1[0], matrixBuffer1[1], vectorB, n);
-    EMatrixMult(matrixT, vectorB, vectorBStarred, n);
-    EReverseMotion(matrixR, vectorX, vectorBStarred, n);
-    return 0;
-}
-
-int EReverseMotion(my_type**& matrixR, my_type*& vectorX, my_type*& vectorB, const size_t n)
-{
-    // if(abs(matrixR[n-1][n-1]) <= epsilon)
-    // {
-    //     std::cout << matrixR[n-1][n-1] << std::endl;
-    //     std::cout << "Matrix is singular\n";
-    //     return 1;
-    // }
-    // else{
-    vectorX[0] = 1;
-    for (int i = n - 1; i >= 0; --i)
-    {
-        my_type sum = 0;
-        for (int j = i + 1; j < n; ++j)
-        {
-            sum += matrixR[i][j] * vectorX[j];
-        }
-        vectorX[i] = (vectorB[i] - sum) / matrixR[i][i];
-    }
-    // }
-    return 0;
-}
-
-int EConditionNumberQR(my_type**& matrixR, my_type**& matrixT, my_type*& vector, const size_t column, const size_t n)
-{
-    //std::cout << "goes CONDNUM stage: " << column << std::endl;
-    //WriteMatrix("matrixR: ", matrixR, n);
-    size_t maxNumber = column;
-    my_type maxValue = matrixR[column][column];
-    for (int i = column; i < n; ++i)
-    {
-        //std::cout << "if " << fabs(matrixR[i][column]) << " > " << fabs(maxNumber) << std::endl;
-        if (fabs(matrixR[i][column]) > fabs(maxValue))
-        {
-            maxValue = matrixR[i][column];
-            maxNumber = i;
-        }
-    }
-
-    if (maxNumber != column) //if diagonal element is not max
-    {
-        //std::cout << "stage " << column << " max number " << maxNumber << std::endl;
-        std::swap(matrixR[column], matrixR[maxNumber]);
-        std::swap(matrixT[column], matrixT[maxNumber]);
-        std::swap(vector[column], vector[maxNumber]);
-    }
-    else
-    {
-        //std::cout << "maxValue:" << maxValue << std::endl;
-        //std::cout << "maxNumber:" << maxNumber << std::endl;
-    }
-
     return 0;
 }
