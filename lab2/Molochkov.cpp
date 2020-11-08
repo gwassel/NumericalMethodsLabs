@@ -13,6 +13,39 @@ bool IfStop(const double* vectorXCurrent, const double* vectorXFollow, double* &
     return ifStop;
 }
 
+bool IfStopTS(const double* vectorX, const double epsilon, const size_t n, bool b)
+{
+    const double vectorXTrue[] = {6, -9, 12, 8};
+    double vectorBuff[] = {0, 0, 0, 0};
+    for(int i = 0; i < n; ++i)
+    {
+        vectorBuff[i] = vectorXTrue[i] - vectorX[i];
+    }
+
+    bool ifStop = (CubicVectorNorm(vectorBuff, n) < epsilon);
+    if(ifStop || b)
+    {
+        std::cout << "|| x*-xk || " << CubicVectorNorm(vectorBuff, n) << std::endl;
+    }
+
+    return ifStop;
+}
+
+bool IfStop1(const double* vectorXCurrent, const double* vectorXFollow, double* vectorBuffer, const double epsilon, const size_t n)
+{
+    VectorDiff(vectorXCurrent, vectorXFollow, vectorBuffer, n);
+    double norm = CubicVectorNorm(vectorBuffer, n);
+
+    bool ifStop = norm < epsilon;
+
+    if(ifStop)
+    {
+        std::cout << "|| xk-xk+1 || " << CubicVectorNorm(vectorBuffer, n) << std::endl;
+    }
+
+    return ifStop;
+}
+
 void GetCY_SimpleIter(const double* const* matrixA, const double* vectorB, const double thau, double** &matrixC, double* &vectorY, const size_t n)
 {
     std::cout << "GetCY simple iter\n";
@@ -79,16 +112,17 @@ void Iterations(const double* const* matrixC, double* &vectorXCurrent, double* &
 //        LogVector("X:", vectorXCurrent, n);
 //        LogVector("Xnext:", vectorXFollow, n);
     }
-    while(!IfStop(vectorXCurrent, vectorXFollow, vectorBuffer, epsilon1, n) && iterationNumber < 100000);
+    while(iterationNumber < 449);
     LogVector("x:", vectorXCurrent, n);
-    std::cout << "iterations: " << iterationNumber << "\n";
+    std::cout << "iterations: " << iterationNumber + 1 << "\n";
+    IfStopTS(vectorXFollow, epsilon, n, 1);
 }
 
 void MCalculations(const double* const* matrixA, const double* vectorB, double** &matrixC, double* &vectorXCurrent, double* &vectorXFollow, double* &vectorY, double* &vectorBuffer, const double thau, const double epsilon, const size_t n)
 {
     std::cout << "MCalculations\n";
-    //GetCY_SimpleIter(matrixA, vectorB, thau, matrixC, vectorY, n);
-    GetCY_Jacobi(matrixA, vectorB, matrixC, vectorY, n);
+    GetCY_SimpleIter(matrixA, vectorB, thau, matrixC, vectorY, n);
+    //GetCY_Jacobi(matrixA, vectorB, matrixC, vectorY, n);
     Iterations(matrixC, vectorXCurrent, vectorXFollow, vectorY, vectorBuffer, epsilon, n);
     std::cout << "res norm: " << ResidualNorm(matrixA, vectorB, vectorXCurrent, vectorBuffer, vectorXFollow, n) << "\n";
 }
