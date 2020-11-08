@@ -6,6 +6,7 @@ int main()
 {
     const int n = 4;
     const int Esize = 4;
+    const double accuracy = 1e-5;
 
     double** matrixA;
 //E vars
@@ -24,8 +25,13 @@ int main()
     double* EvectorBuffer;
     double* EvectorLambda;
 //M vars
-    double** matrixH;
-
+    double** MmatrixH;
+    double** MmatrixAk;
+    double** MmatrixQ;
+    double** MmatrixR;
+    double** MmatrixBuffer;
+    double* MvectorLambdaOld;
+    double* MvectorLambdaNew;
 
     nlohmann::json Ej;
     std::ifstream Efile("menu/Econfig.json");
@@ -41,17 +47,24 @@ int main()
 
     EAllocateMemory(matrixA,EvectorX1,EvectorX2,EvectorLambda,EvectorBstar,EvectorBuffer,EmatrixBuffer1,
                     EmatrixBuffer2,EmatrixT,EmatrixQ,EmatrixR,EmatrixEigenVectors,EmatrixC,Esize);
+    MAllocateMemory(MmatrixH, MmatrixAk, MmatrixQ, MmatrixR, MmatrixBuffer, MvectorLambdaOld, MvectorLambdaNew, n);
 
-    //MAllocateMemory(matrixH, n);
-    AllocateMatrix(matrixH, n);
+
     ReadData(EfileNameMatrix, EfileNameEigenValsInit, matrixA, EvectorLambda, Esize);
 
-    HessenbergForm(matrixA, matrixH, n);
+    HessenbergForm(matrixA, MmatrixH, n);
     
-    PrintMatrix(A, n, "matrix A");
-    PrintMatrix(H, n, "matrixH");
+    PrintMatrix(matrixA, n, "matrix A");
+    PrintMatrix(MmatrixH, n, "matrixH");
 
-    
+    MatrixCopy(MmatrixAk, matrixA, n);
+    int k1 = SimpleQRIterations(MmatrixAk, MmatrixQ, MmatrixR, MmatrixBuffer, MvectorLambdaOld, MvectorLambdaNew, accuracy, n);
+    std::cout << "iter for A: " << k1 << "\n";
+    PrintVector(MvectorLambdaNew, n, "vectorLambda for matrixA");
+    int k2 = SimpleQRIterations(MmatrixH, MmatrixQ, MmatrixR, MmatrixBuffer, MvectorLambdaOld, MvectorLambdaNew, accuracy, n);
+    std::cout << "iter for H: " << k2 << "\n";
+    PrintVector(MvectorLambdaNew, n, "vectorLambda for matrixH");
+
 
 
     std::cout << "--------------------------------------------------------Emelin-------------------------------------------------------" << std::endl;
@@ -63,6 +76,7 @@ int main()
 
     EFreeMemory(matrixA, EvectorX1, EvectorX2, EvectorLambda, EvectorBstar, EvectorBuffer, EmatrixBuffer1, EmatrixBuffer2,
         EmatrixT, EmatrixQ, EmatrixR, EmatrixEigenVectors, EmatrixC, Esize);
+    MFreeMemory();
 
     system("pause");
 }

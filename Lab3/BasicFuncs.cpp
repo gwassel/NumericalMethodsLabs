@@ -231,7 +231,7 @@ int MatrixTranspose(double**& matrixInit, double**& matrixResult, const size_t n
 int MatrixInverse(double**& matrixA, double**& matrixInverted, double**& matrixT,
     double**& matrixQ, double**& matrixR, double**& matrixBuffer, double*& vectorB, const size_t n)
 {
-    QRDecomposer(matrixA, matrixT, matrixQ, matrixR, matrixBuffer[0], matrixBuffer[1], vectorB, n);
+    QRDecomposer(matrixA, matrixT, matrixQ, matrixR, vectorB, n);
 
     MatrixInverseTR(matrixT, matrixR, matrixInverted, matrixBuffer, n);
 
@@ -258,11 +258,13 @@ int MatrixInverseTR(double**& matrixT, double**& matrixR, double**& matrixInvert
 }
 
 int QRDecomposer(double**& matrixA, double**& matrixT, double**& matrixQ,
-    double**& matrixR, double*& vectorBuffer1, double*& vectorBuffer2, double*& vectorB, const size_t n)
+    double**& matrixR, double*& vectorB, const size_t n)
 {
     MatrixCopy(matrixR, matrixA, n);
 
     GetMatrixI(matrixT, n);
+
+    double c, s, c1, c2, radical;
 
     for (int i = 0; i < n - 1; ++i)
     {
@@ -271,36 +273,30 @@ int QRDecomposer(double**& matrixA, double**& matrixT, double**& matrixQ,
 
         for (int j = i + 1; j < n; ++j)
         {
-            double c = matrixR[i][i];
-            double s = matrixR[j][i];
+            c = matrixR[i][i];
+            s = matrixR[j][i];
 
-            double radical = 1 / sqrt(c * c + s * s);
+            radical = 1 / sqrt(c * c + s * s);
 
             c *= radical;
             s *= radical;
 
             for (int k = 0; k < n; ++k)
             {
-                vectorBuffer1[k] = c * matrixR[i][k] + s * matrixR[j][k]; //matrixR[i][k]
-                vectorBuffer2[k] = (-s) * matrixR[i][k] + c * matrixR[j][k]; //matrixR[j][k]
+                c1 = c * matrixR[i][k] + s * matrixR[j][k];
+                c2 = (-s) * matrixR[i][k] + c * matrixR[j][k]; 
+
+                matrixR[i][k] = c1;
+                matrixR[j][k] = c2;
             }
 
             for (int k = 0; k < n; ++k)
             {
-                matrixR[i][k] = vectorBuffer1[k];
-                matrixR[j][k] = vectorBuffer2[k];
-            }
+                c1 = c * matrixT[i][k] + s * matrixT[j][k];
+                c2 = (-s) * matrixT[i][k] + c * matrixT[j][k]; 
 
-            for (int k = 0; k < n; ++k)
-            {
-                vectorBuffer1[k] = c * matrixT[i][k] + s * matrixT[j][k];
-                vectorBuffer2[k] = (-s) * matrixT[i][k] + c * matrixT[j][k];
-            }
-
-            for (int k = 0; k < n; ++k)
-            {
-                matrixT[i][k] = vectorBuffer1[k];
-                matrixT[j][k] = vectorBuffer2[k];
+                matrixT[i][k] = c1;
+                matrixT[j][k] = c2;
             }
             //WriteMatrix("R", matrixR, n);
         }
@@ -311,13 +307,62 @@ int QRDecomposer(double**& matrixA, double**& matrixT, double**& matrixQ,
     return 0;
 }
 
+void QRDecomposerLite(double**& matrixA, double**& matrixT, double**& matrixQ, double**& matrixR, const size_t n)
+{
+    MatrixCopy(matrixR, matrixA, n);
+
+    GetMatrixI(matrixT, n);
+
+    double c, s, c1, c2, radical;
+
+    for (int i = 0; i < n - 1; ++i)
+    {
+        //��� ����� �������� ��������
+
+        for (int j = i + 1; j < n; ++j)
+        {
+            if(matrixR[j][i] > 1e-6)
+            {
+                c = matrixR[i][i];
+                s = matrixR[j][i];
+
+                radical = 1 / sqrt(c * c + s * s);
+
+                c *= radical;
+                s *= radical;
+
+                for (int k = i; k < n; ++k)
+                {
+                    c1 = c * matrixR[i][k] + s * matrixR[j][k];
+                    c2 = (-s) * matrixR[i][k] + c * matrixR[j][k]; 
+
+                    matrixR[i][k] = c1;
+                    matrixR[j][k] = c2;
+                }
+
+                for (int k = i; k < n; ++k)
+                {
+                    c1 = c * matrixT[i][k] + s * matrixT[j][k];
+                    c2 = (-s) * matrixT[i][k] + c * matrixT[j][k]; 
+
+                    matrixT[i][k] = c1;
+                    matrixT[j][k] = c2;
+                }
+            }
+            //WriteMatrix("R", matrixR, n);
+        }
+    }
+
+    MatrixTranspose(matrixT, matrixQ, n);
+}
+
 int QRCalculations(double**& matrixA, double**& matrixT, double**& matrixQ, double**& matrixR, double*& vectorB,
     double*& vectorX, double**& matrixBuffer1, double**& matrixBuffer2,
     double*& vectorBStarred, const size_t n)
 {
     MatrixCopy(matrixR, matrixA, n);
     //QRDecomposer2(matrixA, matrixQ, matrixR, matrixBuffer1, matrixBuffer2, n);
-    QRDecomposer(matrixA, matrixT, matrixQ, matrixR, matrixBuffer1[0], matrixBuffer1[1], vectorB, n);
+    QRDecomposer(matrixA, matrixT, matrixQ, matrixR, vectorB, n);
     MatrixMult(matrixT, vectorB, vectorBStarred, n);
     ReverseMotion(matrixR, vectorX, vectorBStarred, n);
     return 0;
@@ -368,6 +413,37 @@ int ConditionNumberQR(double**& matrixR, double**& matrixT, double*& vector, con
         std::swap(matrixR[column], matrixR[maxNumber]);
         std::swap(matrixT[column], matrixT[maxNumber]);
         std::swap(vector[column], vector[maxNumber]);
+    }
+    else
+    {
+        //std::cout << "maxValue:" << maxValue << std::endl;
+        //std::cout << "maxNumber:" << maxNumber << std::endl;
+    }
+
+    return 0;
+}
+
+int ConditionNumberQRLite(double**& matrixR, double**& matrixT, const size_t column, const size_t n)
+{
+    //std::cout << "goes CONDNUM stage: " << column << std::endl;
+    //WriteMatrix("matrixR: ", matrixR, n);
+    size_t maxNumber = column;
+    double maxValue = matrixR[column][column];
+    for (int i = column; i < n; ++i)
+    {
+        //std::cout << "if " << fabs(matrixR[i][column]) << " > " << fabs(maxNumber) << std::endl;
+        if (fabs(matrixR[i][column]) > fabs(maxValue))
+        {
+            maxValue = matrixR[i][column];
+            maxNumber = i;
+        }
+    }
+
+    if (maxNumber != column) //if diagonal element is not max
+    {
+        //std::cout << "stage " << column << " max number " << maxNumber << std::endl;
+        std::swap(matrixR[column], matrixR[maxNumber]);
+        std::swap(matrixT[column], matrixT[maxNumber]);
     }
     else
     {

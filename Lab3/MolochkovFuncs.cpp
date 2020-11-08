@@ -3,6 +3,24 @@
 #include <iostream>
 #include "Header.hpp"
 
+void MAllocateMemory(double** &matrixH, double** &matrixAk, double** &matrixQ, double** &matrixR, double** &matrixBuffer, double* &vectorLambdaOld, 
+        double* &vectorLambdaNew, const size_t n)
+{
+    AllocateMatrix(matrixH, n);
+    AllocateMatrix(matrixAk, n);
+    AllocateMatrix(matrixQ, n);
+    AllocateMatrix(matrixR, n);
+    AllocateMatrix(matrixBuffer, n);
+
+    AllocateVector(vectorLambdaOld, n);
+    AllocateVector(vectorLambdaNew, n);
+}
+
+void MFreeMemory()
+{
+    std::cout << "Need to add MFreeMemory!!\n";
+}
+
 void HessenbergForm(double** &matrixA, double** &matrixH, const size_t n)
 {
     MatrixCopy(matrixH, matrixA, n);
@@ -41,3 +59,27 @@ void HessenbergForm(double** &matrixA, double** &matrixH, const size_t n)
     }
 }
 
+int SimpleQRIterations(double** &matrixAk, double** &matrixQ, double** &matrixR, double** &matrixBuffer, double* &vectorLambdaOld, 
+        double* &vectorLambdaNew, double accuracy, const size_t n)//Ak=A0
+{
+    int k = 0;
+    double delta = 100;
+    PrintMatrix(matrixAk, n, "matrixAk in SimpleQRI");
+
+    while(k < 100 && delta > accuracy)
+    {
+        QRDecomposerLite(matrixAk, matrixBuffer, matrixQ, matrixR, n);
+        MatrixMultMatrix(matrixR, matrixQ, matrixAk, n);
+
+        for(int i = 0; i < n; ++i){
+            vectorLambdaOld[i] = vectorLambdaNew[i];
+            vectorLambdaNew[i] = matrixAk[i][i];
+            matrixBuffer[0][i] = vectorLambdaNew[i] - vectorLambdaOld[i];
+        }
+
+        delta = CubicVectorNorm(matrixBuffer[0], n);
+        ++k;
+    }
+
+    return k;
+}

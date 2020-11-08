@@ -22,10 +22,13 @@ int EFreeMemory(double**& matrixA, double*& vectorX1, double*& vectorX2, double*
     const int size);
 
 //Molochkov
-void MAllocateMemory();
+void MAllocateMemory(double** &matrixH, double** &matrixAk, double** &matrixQ, double** &matrixR, double** &matrixBuffer, double* &vectorLambdaOld, 
+        double* &vectorLambdaNew, const size_t n);
 void MCalculations();
 void MWriteData();
 void MFreeMemory();
+int SimpleQRIterations(double** &matrixAk, double** &matrixQ, double** &matrixR, double** &matrixBuffer, double* &vectorLambdaOld, 
+        double* &vectorLambdaNew, double accuracy, const size_t n);
 
 //������ � ����
 int WriteVector(std::string fileNameOutput, double*& vector, const int& n);
@@ -55,15 +58,19 @@ int MatrixInverse(double**& matrixA, double**& matrixInverted, double**& matrixT
 int MatrixInverseTR(double**& matrixT, double**& matrixR, double**& matrixInverted,
     double**& matrixBuffer, const size_t n);
 int QRDecomposer(double**& matrixA, double**& matrixT, double**& matrixQ,
-    double**& matrixR, double*& vectorBuffer1, double*& vectorBuffer2, double*& vectorB, const size_t n);
+    double**& matrixR, double*& vectorB, const size_t n);
 int QRCalculations(double**& matrixA, double**& matrixT, double**& matrixQ, double**& matrixR, double*& vectorB,
     double*& vectorX, double**& matrixBuffer1, double**& matrixBuffer2,
     double*& vectorBStarred, const size_t n);
 int ReverseMotion(double**& matrixR, double*& vectorX, double*& vectorB, const size_t n);
 int ConditionNumberQR(double**& matrixR, double**& matrixT, double*& vector, const size_t column, const size_t n);
+void QRDecomposerLite(double**& matrixA, double**& matrixT, double**& matrixQ, double**& matrixR, const size_t n);
+int ConditionNumberQRLite(double**& matrixR, double**& matrixT, const size_t column, const size_t n);
 
 //Hessenberg
 void HessenbergForm(double** &matrixA, double** &matrixH, const size_t n);
+
+
 void AllocateMatrix(double**&, const size_t);
 void AllocateVector(double*&, const size_t);
 void FreeMatrix(double*&, const size_t);
