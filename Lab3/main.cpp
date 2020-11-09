@@ -33,6 +33,8 @@ int main()
     double* MvectorLambdaOld;
     double* MvectorLambdaNew;
 
+
+//readinit
     nlohmann::json Ej;
     std::ifstream Efile("menu/Econfig.json");
     const int ESYSTEM = 0;
@@ -43,6 +45,7 @@ int main()
 
     const std::string EfileMatrixEVecName = Ej[ESYSTEM]["package_res"].get<std::string>() + Ej[ESYSTEM]["eigen_vectors_file_res_name"].get<std::string>();
     const std::string EfileMatrixEValName = Ej[ESYSTEM]["package_res"].get<std::string>() + Ej[ESYSTEM]["eigen_values_file_res_name"].get<std::string>();
+//readinit
 
 
     EAllocateMemory(matrixA,EvectorX1,EvectorX2,EvectorLambda,EvectorBstar,EvectorBuffer,EmatrixBuffer1,
@@ -52,6 +55,8 @@ int main()
 
     ReadData(EfileNameMatrix, EfileNameEigenValsInit, matrixA, EvectorLambda, Esize);
 
+
+//Mcalc
     HessenbergForm(matrixA, MmatrixH, n);
     
     PrintMatrix(matrixA, n, "matrix A");
@@ -69,14 +74,14 @@ int main()
 
     MatrixCopy(MmatrixAk, matrixA, n);
     int k3 = ShiftQRIterations(MmatrixAk, MmatrixQ, MmatrixR, MmatrixBuffer, MvectorLambdaOld, MvectorLambdaNew, accuracy, n);
-    std::cout << "iter for A but w/ shifts:" << k3 << "\n";
     PrintVector(MvectorLambdaNew, n, "vectorLambdaNew for matrixA with shafts");
+    PrintVector(MvectorLambdaOld, n-1, "number of iterations by steps");
     
     MatrixCopy(MmatrixAk, MmatrixH, n);
     int k4 = ShiftQRIterations(MmatrixAk, MmatrixQ, MmatrixR, MmatrixBuffer, MvectorLambdaOld, MvectorLambdaNew, accuracy, n);
-    std::cout << "iter for H w/ shafts: " << k2 << "\n";
     PrintVector(MvectorLambdaNew, n, "vectorLambda for matrixH with shafts");
-
+    PrintVector(MvectorLambdaOld, n-1, "number of iterations by steps");
+//Mcalc
 
     std::cout << "--------------------------------------------------------Emelin-------------------------------------------------------" << std::endl;
 

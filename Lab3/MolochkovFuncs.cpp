@@ -47,7 +47,7 @@ void HessenbergForm(double** &matrixA, double** &matrixH, const size_t n)
                 matrixH[i][k] = c2;
             }
 
-            for(int k = j; k < n; ++k)
+            for(int k = 0; k < n; ++k)
             {
                 c1 = c * matrixH[k][j+1] + s * matrixH[k][i];
                 c2 = (-s) * matrixH[k][j+1] + c * matrixH[k][i];
@@ -83,12 +83,12 @@ int SimpleQRIterations(double** &matrixAk, double** &matrixQ, double** &matrixR,
     return k;
 }
 
-int ShiftQRIterations(double** &matrixAk, double** &matrixQ, double** &matrixR, double** &matrixBuffer, double* &vectorLambdaOld, 
+int ShiftQRIterations(double** &matrixAk, double** &matrixQ, double** &matrixR, double** &matrixBuffer, double* &vectorOfK, 
         double* &vectorLambdaNew, double accuracy, const size_t n)
 {
     int k = 0;
     double sigma = 0, delta = 100;
-    for(int i = n; i > 0; --i){
+    for(int i = n; i > 1; --i){
         k = 0;
         delta = 500;
         while(k < 5000 && delta > accuracy)
@@ -105,6 +105,7 @@ int ShiftQRIterations(double** &matrixAk, double** &matrixQ, double** &matrixR, 
             delta = CubicVectorNorm(matrixBuffer[0], i);
             ++k;
         }
+        vectorOfK[n-i] = k;
     }
     for(int i = 0; i < n; ++i)
         vectorLambdaNew[i] = matrixAk[i][i]; 
