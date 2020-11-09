@@ -47,7 +47,7 @@ void HessenbergForm(double** &matrixA, double** &matrixH, const size_t n)
                 matrixH[i][k] = c2;
             }
 
-            for(int k = 0; k < n; ++k)
+            for(int k = j; k < n; ++k)
             {
                 c1 = c * matrixH[k][j+1] + s * matrixH[k][i];
                 c2 = (-s) * matrixH[k][j+1] + c * matrixH[k][i];
@@ -64,9 +64,8 @@ int SimpleQRIterations(double** &matrixAk, double** &matrixQ, double** &matrixR,
 {
     int k = 0;
     double delta = 100;
-    PrintMatrix(matrixAk, n, "matrixAk in SimpleQRI");
 
-    while(k < 100 && delta > accuracy)
+    while(k < 2000 && delta > accuracy)
     {
         QRDecomposerLite(matrixAk, matrixBuffer, matrixQ, matrixR, n);
         MatrixMultMatrix(matrixR, matrixQ, matrixAk, n);
@@ -81,5 +80,33 @@ int SimpleQRIterations(double** &matrixAk, double** &matrixQ, double** &matrixR,
         ++k;
     }
 
+    return k;
+}
+
+int ShiftQRIterations(double** &matrixAk, double** &matrixQ, double** &matrixR, double** &matrixBuffer, double* &vectorLambdaOld, 
+        double* &vectorLambdaNew, double accuracy, const size_t n)
+{
+    int k = 0;
+    double sigma = 0, delta = 100;
+    for(int i = n; i > 0; --i){
+        k = 0;
+        delta = 500;
+        while(k < 5000 && delta > accuracy)
+        {
+            sigma = matrixAk[i-1][i-1];
+            MatrixResE(matrixAk, i, sigma);
+            QRDecomposerLite(matrixAk, matrixBuffer, matrixQ, matrixR, i);
+            MatrixMultMatrix(matrixR, matrixQ, matrixAk, i);
+            MatrixResE(matrixAk, i, -sigma);
+            
+            for(int j = 0; j < i - 1; ++j)
+                matrixBuffer[0][j] = matrixAk[i-1][j];
+
+            delta = CubicVectorNorm(matrixBuffer[0], i);
+            ++k;
+        }
+    }
+    for(int i = 0; i < n; ++i)
+        vectorLambdaNew[i] = matrixAk[i][i]; 
     return k;
 }

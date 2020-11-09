@@ -1,2 +1,2 @@
 all:
-	g++ main.cpp EmelinFuncs.cpp MolochkovFuncs.cpp BasicFuncs.cpp
+	g++ -g main.cpp EmelinFuncs.cpp MolochkovFuncs.cpp BasicFuncs.cpp

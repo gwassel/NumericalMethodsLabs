@@ -281,7 +281,7 @@ int QRDecomposer(double**& matrixA, double**& matrixT, double**& matrixQ,
             c *= radical;
             s *= radical;
 
-            for (int k = 0; k < n; ++k)
+            for (int k = i; k < n; ++k)
             {
                 c1 = c * matrixR[i][k] + s * matrixR[j][k];
                 c2 = (-s) * matrixR[i][k] + c * matrixR[j][k]; 
@@ -317,11 +317,9 @@ void QRDecomposerLite(double**& matrixA, double**& matrixT, double**& matrixQ, d
 
     for (int i = 0; i < n - 1; ++i)
     {
-        //��� ����� �������� ��������
-
         for (int j = i + 1; j < n; ++j)
         {
-            if(matrixR[j][i] > 1e-6)
+            if(matrixR[j][i] != 0)
             {
                 c = matrixR[i][i];
                 s = matrixR[j][i];
@@ -340,7 +338,7 @@ void QRDecomposerLite(double**& matrixA, double**& matrixT, double**& matrixQ, d
                     matrixR[j][k] = c2;
                 }
 
-                for (int k = i; k < n; ++k)
+                for (int k = 0; k < n; ++k)
                 {
                     c1 = c * matrixT[i][k] + s * matrixT[j][k];
                     c2 = (-s) * matrixT[i][k] + c * matrixT[j][k]; 
@@ -348,8 +346,9 @@ void QRDecomposerLite(double**& matrixA, double**& matrixT, double**& matrixQ, d
                     matrixT[i][k] = c1;
                     matrixT[j][k] = c2;
                 }
-            }
+            
             //WriteMatrix("R", matrixR, n);
+            }
         }
     }
 
@@ -452,4 +451,12 @@ int ConditionNumberQRLite(double**& matrixR, double**& matrixT, const size_t col
     }
 
     return 0;
+}
+
+void MatrixResE(double** &matrix, const size_t n, double c=1)
+{
+    for(int i = 0; i < n; ++i)
+    {
+        matrix[i][i] -= c;
+    }
 }

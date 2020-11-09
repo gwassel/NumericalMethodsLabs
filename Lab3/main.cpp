@@ -5,8 +5,8 @@
 int main()
 {
     const int n = 4;
-    const int Esize = 4;
-    const double accuracy = 1e-5;
+    const int Esize = n;
+    const double accuracy = 1e-10;
 
     double** matrixA;
 //E vars
@@ -60,11 +60,22 @@ int main()
     MatrixCopy(MmatrixAk, matrixA, n);
     int k1 = SimpleQRIterations(MmatrixAk, MmatrixQ, MmatrixR, MmatrixBuffer, MvectorLambdaOld, MvectorLambdaNew, accuracy, n);
     std::cout << "iter for A: " << k1 << "\n";
-    PrintVector(MvectorLambdaNew, n, "vectorLambda for matrixA");
-    int k2 = SimpleQRIterations(MmatrixH, MmatrixQ, MmatrixR, MmatrixBuffer, MvectorLambdaOld, MvectorLambdaNew, accuracy, n);
+    PrintVector(MvectorLambdaNew, n, "vectorLambdaNew for matrixA");
+
+    MatrixCopy(MmatrixAk, MmatrixH, n);
+    int k2 = SimpleQRIterations(MmatrixAk, MmatrixQ, MmatrixR, MmatrixBuffer, MvectorLambdaOld, MvectorLambdaNew, accuracy, n);
     std::cout << "iter for H: " << k2 << "\n";
     PrintVector(MvectorLambdaNew, n, "vectorLambda for matrixH");
 
+    MatrixCopy(MmatrixAk, matrixA, n);
+    int k3 = ShiftQRIterations(MmatrixAk, MmatrixQ, MmatrixR, MmatrixBuffer, MvectorLambdaOld, MvectorLambdaNew, accuracy, n);
+    std::cout << "iter for A but w/ shifts:" << k3 << "\n";
+    PrintVector(MvectorLambdaNew, n, "vectorLambdaNew for matrixA with shafts");
+    
+    MatrixCopy(MmatrixAk, MmatrixH, n);
+    int k4 = ShiftQRIterations(MmatrixAk, MmatrixQ, MmatrixR, MmatrixBuffer, MvectorLambdaOld, MvectorLambdaNew, accuracy, n);
+    std::cout << "iter for H w/ shafts: " << k2 << "\n";
+    PrintVector(MvectorLambdaNew, n, "vectorLambda for matrixH with shafts");
 
 
     std::cout << "--------------------------------------------------------Emelin-------------------------------------------------------" << std::endl;

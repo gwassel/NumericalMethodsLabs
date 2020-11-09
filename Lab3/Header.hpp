@@ -29,6 +29,8 @@ void MWriteData();
 void MFreeMemory();
 int SimpleQRIterations(double** &matrixAk, double** &matrixQ, double** &matrixR, double** &matrixBuffer, double* &vectorLambdaOld, 
         double* &vectorLambdaNew, double accuracy, const size_t n);
+int ShiftQRIterations(double** &matrixAk, double** &matrixQ, double** &matrixR, double** &matrixBuffer, double* &vectorLambdaOld, 
+        double* &vectorLambdaNew, double accuracy, const size_t n);
 
 //������ � ����
 int WriteVector(std::string fileNameOutput, double*& vector, const int& n);
@@ -46,6 +48,7 @@ void PrintVector(double*& B, const int& size, std::string s);
 int MatrixMultVector(double**& matrix, double*& vector, double*& vectorResult, const size_t n);
 int MatrixMultMatrix(double**& matrixA, double**& matrixB, double**& matrixResult, const size_t n);
 double VectorMultVector(double*& vectorX1, double*& vectorX2, const size_t n);
+void MatrixResE(double** &matrix, const size_t n, double c);
 
 //QR
 int MatrixMult(double**& matrix, double*& vector, double*& vectorResult, const size_t n);
