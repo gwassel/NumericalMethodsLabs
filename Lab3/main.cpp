@@ -6,7 +6,7 @@ int main()
 {
     const int n = 4;
     const int Esize = n;
-    const double accuracy = 1e-10;
+    const double accuracy = 1e-6;
 
     double** matrixA;
 //E vars
@@ -82,6 +82,14 @@ int main()
     PrintVector(MvectorLambdaNew, n, "vectorLambda for matrixH with shafts");
     PrintVector(MvectorLambdaOld, n-1, "number of iterations by steps");
 //Mcalc
+    
+    // EvectorLambda[0] = MvectorLambdaNew[1];
+    // EvectorLambda[1] = MvectorLambdaNew[2];
+    // EvectorLambda[2] = MvectorLambdaNew[0];
+    // EvectorLambda[3] = MvectorLambdaNew[3];
+
+    for(int i = 0; i < n; ++i)
+        EvectorLambda[i]=MvectorLambdaNew[i];
 
     std::cout << "--------------------------------------------------------Emelin-------------------------------------------------------" << std::endl;
 
@@ -89,6 +97,14 @@ int main()
         EmatrixT, EmatrixQ, EmatrixR, EmatrixEigenVectors, EmatrixC, Esize);
 
     EWriteData(EfileMatrixEVecName, EfileMatrixEValName, EmatrixEigenVectors, EvectorLambda, Esize);
+
+    MatrixMultVector(matrixA, EmatrixEigenVectors[3], EvectorBuffer, n);
+    for(int i = 0; i < n; ++i)
+        EmatrixEigenVectors[3][i] *= EvectorLambda[3];
+
+    PrintVector(EvectorBuffer, n, "this need to be eq to that");
+    PrintVector(EmatrixEigenVectors[0], n, "this need to be eq to that");
+    
 
     EFreeMemory(matrixA, EvectorX1, EvectorX2, EvectorLambda, EvectorBstar, EvectorBuffer, EmatrixBuffer1, EmatrixBuffer2,
         EmatrixT, EmatrixQ, EmatrixR, EmatrixEigenVectors, EmatrixC, Esize);
