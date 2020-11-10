@@ -83,6 +83,9 @@ int main()
     PrintVector(MvectorLambdaOld, n-1, "number of iterations by steps");
 //Mcalc
 
+    for(int i = 0; i < n; ++i)
+        EvectorLambda[i] = MvectorLambdaNew[i];
+
     std::cout << "--------------------------------------------------------Emelin-------------------------------------------------------" << std::endl;
 
     ECalculations(matrixA, EvectorX1, EvectorX2, EvectorLambda, EvectorBstar, EvectorBuffer, EmatrixBuffer1, EmatrixBuffer2,
