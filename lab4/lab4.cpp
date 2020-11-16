@@ -17,6 +17,6 @@ int main()
 
     WriteData();
     FreeMemory();*/
-    std::cout << "Hello!" << std::endl;
+    std::cout << "Hello!!!" << std::endl;
     return 0;
 }
