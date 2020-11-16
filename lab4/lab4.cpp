@@ -1,9 +1,10 @@
 #include <iostream>
+//#include <Grid.cpp>
 
 int main()
 {
     //declare variables
-
+/*
     ReadInit();
     AllocateMemory();
     ReadData();
@@ -15,6 +16,7 @@ int main()
     SplineInterpolate();
 
     WriteData();
-    FreeMemory();
+    FreeMemory();*/
+    std::cout << "Hello!" << std::endl;
     return 0;
 }
