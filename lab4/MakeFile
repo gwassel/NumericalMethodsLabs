@@ -1,0 +1,7 @@
+all: compile
+
+compile: main.o basic.o Interpolation.o Grid.o
+    g++ -g main.o basic.o Interpolation.o Grid.o
+
+clean:
+    rm -rf *.o compile
