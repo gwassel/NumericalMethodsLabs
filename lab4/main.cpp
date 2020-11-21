@@ -10,8 +10,8 @@ int main()
     Grid uniformGrid = Grid(size);
     Grid ChebishevGrid = Grid(size);
     
-    Polynomial p1 = Polynomial(n);
-    Polynomial pBuffer = Polynomial(n);
+    Polynomial p1 = Polynomial(size);
+    Polynomial pBuffer = Polynomial(size);
     
     Basis basis = Basis(n);
 

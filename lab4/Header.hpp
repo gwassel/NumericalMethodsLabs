@@ -9,7 +9,7 @@ struct Point
     double x = 0;
     double y = 0;
 
-    Point(double x_=0, double y_=0);
+    Point(double x_=1, double y_=1);
 };
 
 struct Grid

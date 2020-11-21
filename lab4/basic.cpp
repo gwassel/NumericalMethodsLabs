@@ -39,7 +39,7 @@ void WriteCoords(const std::string fileNameOutput, Grid &grid)
 }
 
 
-Point::Point(double x_ /*= 0*/, double y_ /*= 0*/)
+Point::Point(double x_ /*= 1*/, double y_ /*= 1*/)
 {
     x = x_;
     y = y_;
