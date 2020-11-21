@@ -4,7 +4,6 @@ int main()
 {
     size_t n = 4;
     int size = n + 1;
-    double* PointVector = new double[size];
     double leftBorder = -1;
     double rightBorder = 1;
 
@@ -19,11 +18,6 @@ int main()
 
     MakeMesh(leftBorder, rightBorder, uniformGrid, 1);
     MakeMesh(leftBorder, rightBorder, ChebishevGrid, 2);
-
-    for (int i = 0; i < size; i++) {
-        std::cout << ChebishevGrid.points[i].x << std::endl;
-    }
-
 
     ReadInit();
     AllocateMemory();
