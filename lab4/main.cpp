@@ -2,7 +2,16 @@
 
 int main()
 {
-    //declare variables
+    size_t n = 3;
+
+    Grid uniformGrid = Grid(n);
+    Grid ChebishevGrid = Grid(n);
+    
+    Polynomial p1 = Polynomial(n);
+    Polynomial pBuffer = Polynomial(n);
+    
+    Basis basis = Basis(n);
+
 
     ReadInit();
     AllocateMemory();
@@ -11,7 +20,7 @@ int main()
     MakeUniformMesh();
     MakeChebishevMesh();//name may be incorrect
 
-    LagrangeInterpolate();
+    LagrangeInterpolate(uniformGrid, basis, p1, pBuffer);
     SplineInterpolate();
 
     WriteData();
