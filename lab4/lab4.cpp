@@ -1,8 +1,21 @@
 #include <iostream>
-//#include <Grid.cpp>
+#include "Header.h"
+
 
 int main()
 {
+    int n = 4;
+    int size = n + 1;
+    double* PointVector = new double[size];
+    double A = -1;
+    double B = 1;
+
+    MakeMesh(A, B, PointVector, size, 2);
+
+    for (int i = 0; i < size; i++) {
+        std::cout << PointVector[i] << std::endl;
+    }
+
     //declare variables
 /*
     ReadInit();
@@ -17,6 +30,5 @@ int main()
 
     WriteData();
     FreeMemory();*/
-    std::cout << "Hello!!!" << std::endl;
     return 0;
 }
