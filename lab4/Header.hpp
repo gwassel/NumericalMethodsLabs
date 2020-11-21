@@ -1,5 +1,8 @@
 #include <iostream>
-
+#include <string>
+#include <cmath>
+#include <fstream>
+#include <algorithm>
 
 struct Point
 {
@@ -107,4 +110,7 @@ void SplineInterpolate();
 void WriteData();
 void FreeMemory();
 
-
+void MakeMesh(double x0, double xN, Grid &grid, int MeshType);
+void MergeSort(double*& A, int first, int last, int size);
+void Merge(double*& A, int first, int last, int size);
+void WriteCoords(const std::string fileNameOutput, Grid &grid);
