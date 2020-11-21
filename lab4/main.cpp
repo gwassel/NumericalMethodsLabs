@@ -1,4 +1,4 @@
-#include <iostream>
+#include "Header.hpp"
 
 int main()
 {
@@ -16,5 +16,8 @@ int main()
 
     WriteData();
     FreeMemory();
+
+    std::cout << "Hello world xdDDDddD\n";
+
     return 0;
 }

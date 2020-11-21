@@ -1,7 +1,19 @@
 all: compile
 
 compile: main.o basic.o Interpolation.o Grid.o
-    g++ -g main.o basic.o Interpolation.o Grid.o
+	g++ -g main.o basic.o Interpolation.o Grid.o
+
+main.o: main.cpp
+	g++ -g -c main.cpp
+
+basic.o: basic.cpp
+	g++ -g -c basic.cpp
+
+Interpolation.o: Interpolation.cpp
+	g++ -g -c Interpolation.cpp
+
+Grid.o: Grid.cpp
+	g++ -g -c Grid.cpp
 
 clean:
-    rm -rf *.o compile
+	rm -rf *.o compile
