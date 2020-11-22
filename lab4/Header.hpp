@@ -71,9 +71,9 @@ void ReadData();
 void MakeUniformMesh();
 void MakeChebishevMesh();//name may be incorrect
 
-void LagrangeInterpolate(Grid &grid, Basis &basis, Polynomial &pLagrange, Polynomial &pBuffer, Polynomial &monomial);
+void LagrangeInterpolate(Grid &grid, Basis &basis, Polynomial &pLagrange, Polynomial &pBuffer, Polynomial &monomial, std::string label = "");
 void SplineInterpolate();
-double test(Polynomial &p1, Grid &grid);
+double CheckOnGridPoints(Polynomial &p1, Grid &grid);
 
 void WriteData();
 void FreeMemory();
@@ -82,3 +82,5 @@ void MakeMesh(double x0, double xN, Grid &grid, int MeshType);
 void MergeSort(double*& A, int first, int last, int size);
 void Merge(double*& A, int first, int last, int size);
 void WriteCoords(const std::string fileNameOutput, Grid &grid);
+
+void test(Polynomial &p1, Grid &grid, std::string label);

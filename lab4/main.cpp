@@ -11,33 +11,31 @@ int main()
     Grid ChebishevGrid = Grid(size);
     
     Polynomial p1 = Polynomial(size);
+    Polynomial p2 = Polynomial(size);
     Polynomial pBuffer = Polynomial(size);
-
     Polynomial monomial = Polynomial(2);
     
-    Basis basis = Basis(size);
+    Basis basis1 = Basis(size);
+    Basis basis2 = Basis(size);
 
 
     MakeMesh(leftBorder, rightBorder, uniformGrid, 1);
-    //MakeMesh(leftBorder, rightBorder, ChebishevGrid, 2);
+    MakeMesh(leftBorder, rightBorder, ChebishevGrid, 2);
 
     ReadInit();
     AllocateMemory();
     ReadData();
 
-    LagrangeInterpolate(uniformGrid, basis, p1, pBuffer, monomial);
+    LagrangeInterpolate(uniformGrid, basis1, p1, pBuffer, monomial, "Lagrange Polynomial on uniform grid");
+    LagrangeInterpolate(ChebishevGrid, basis2, p2, pBuffer, monomial, "Lagrange Polynomial on Chebishev grid");
 
-    double err = test(p1, uniformGrid);
     SplineInterpolate();
-
-    for(int i = 0; i < p1.length; ++i)
-        std::cout << p1.coefficents[i] << "x^" << i << " ";
-    std::cout << "\n";
 
     WriteData();
     FreeMemory();
 
-    std::cout << "err:" << err << "\n";
+    test(p1, uniformGrid, "Lagrange on uniform grid");
+    test(p2, ChebishevGrid, "Lagrange on Chebishev grid");
 
     return 0;
 }
