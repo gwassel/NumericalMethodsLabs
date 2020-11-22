@@ -43,15 +43,3 @@ void MakeMesh(double x0, double xN, Grid &grid, int MeshType) {
 
 	WriteCoords("res/coord.txt", grid);
 }
-
-void WriteCoords(const std::string fileNameOutput, Grid &grid)
-{
-	std::ofstream fileOutput;
-	fileOutput.open(fileNameOutput);
-
-	for (int i = 0; i < grid.length; ++i)
-	{
-		fileOutput << grid.points[i].x << " " << grid.points[i].y << "\n";
-	}
-}
-
