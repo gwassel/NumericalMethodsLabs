@@ -12,24 +12,32 @@ int main()
     
     Polynomial p1 = Polynomial(size);
     Polynomial pBuffer = Polynomial(size);
+
+    Polynomial monomial = Polynomial(2);
     
-    Basis basis = Basis(n);
+    Basis basis = Basis(size);
 
 
     MakeMesh(leftBorder, rightBorder, uniformGrid, 1);
-    MakeMesh(leftBorder, rightBorder, ChebishevGrid, 2);
+    //MakeMesh(leftBorder, rightBorder, ChebishevGrid, 2);
 
     ReadInit();
     AllocateMemory();
     ReadData();
 
-    LagrangeInterpolate(uniformGrid, basis, p1, pBuffer);
+    LagrangeInterpolate(uniformGrid, basis, p1, pBuffer, monomial);
+
+    double err = test(p1, uniformGrid);
     SplineInterpolate();
+
+    for(int i = 0; i < p1.length; ++i)
+        std::cout << p1.coefficents[i] << "x^" << i << " ";
+    std::cout << "\n";
 
     WriteData();
     FreeMemory();
 
-    std::cout << "Hello world xdDDDddD\n";
+    std::cout << "err:" << err << "\n";
 
     return 0;
 }

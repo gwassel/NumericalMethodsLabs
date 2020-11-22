@@ -68,6 +68,14 @@ Polynomial::Polynomial(size_t length_ /*= 0*/)
 {
     length = length_;
     coefficents = new double[length];
+    for(int i = 1; i < length; ++i)
+    {
+        coefficents[i] = 0;
+    }
+    if(length)
+    {
+        coefficents[0] = 1;
+    }
 }
 Polynomial::~Polynomial()
 {
@@ -80,12 +88,28 @@ Polynomial::Polynomial(Polynomial&& other)
     length = other.length;
     other.length = 0;
 }
+double Polynomial::eval(double x)
+{
+    double sum = coefficents[0];
 
+    for(int i = 1; i < length; ++i)
+    {
+        sum += coefficents[i] * pow(x, i);
+    }
+
+    return sum;
+}
 
 Basis::Basis(size_t length_ /*= 0*/)
 {
     length = length_;
     polynomials = new Polynomial[length];
+
+    for(int i = 0; i < length; ++i)
+    {
+        polynomials[i] = Polynomial(length);
+    }        
+
 }
 Basis::~Basis()
 {

@@ -9,7 +9,7 @@ struct Point
     double x = 0;
     double y = 0;
 
-    Point(double x_=1, double y_=1);
+    Point(double x_=0, double y_=0);
 };
 
 struct Grid
@@ -35,7 +35,20 @@ struct Polynomial
     Polynomial(const Polynomial & other) = delete;
     Polynomial(Polynomial&& other);
     Polynomial& operator=(const Polynomial & other) = delete;
-    Polynomial& operator=(Polynomial&& other) = delete;
+    Polynomial& operator=(Polynomial&& other)
+    {
+        if (this == &other)
+            return *this;
+
+        delete[] coefficents;
+        coefficents = other.coefficents;
+        length = other.length;
+        other.coefficents = nullptr;
+        other.length = 0;
+        return *this;
+    }
+
+    double eval(double x);
 };
 
 struct Basis
@@ -58,8 +71,9 @@ void ReadData();
 void MakeUniformMesh();
 void MakeChebishevMesh();//name may be incorrect
 
-void LagrangeInterpolate(Grid& grid, Basis &basis, Polynomial &pLagrange, Polynomial &pBuffer);
+void LagrangeInterpolate(Grid &grid, Basis &basis, Polynomial &pLagrange, Polynomial &pBuffer, Polynomial &monomial);
 void SplineInterpolate();
+double test(Polynomial &p1, Grid &grid);
 
 void WriteData();
 void FreeMemory();

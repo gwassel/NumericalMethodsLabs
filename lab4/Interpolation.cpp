@@ -1,46 +1,58 @@
 #include "Header.hpp"
 
 
-void LagrangeInterpolate(Grid &grid, Basis &basis, Polynomial &pLagrange, Polynomial &pBuffer)
+void PolynomialMultiplication(Polynomial &p1, Polynomial &p2, Polynomial &pResult)
 {
-    double a = 0, b = 0;// coeffitients of aX + b polynomial
+    for(int i = 0; i < pResult.length; ++i)
+    {
+        pResult.coefficents[i] = 0;
+    }
+
+    for(int i = 0; i < p1.length; ++i)
+    {
+        for(int j = 0; j < p2.length; ++j)
+        {
+            pResult.coefficents[i + j] += p1.coefficents[i] * p2.coefficents[j];
+        }
+    }
+}
+
+void LagrangeInterpolate(Grid &grid, Basis &basis, Polynomial &pLagrange, Polynomial &pBuffer, Polynomial &monomial)
+{
+    double a = 0, b = 0; // coeffitients of aX + b polynomial
     double denominator = 0;
 
     for(int k = 0; k < basis.length; ++k)
     {
         for(int j = 0; j < pLagrange.length; ++j)
         {
-            if(k != j)
+            if(j != k)
             {
                 denominator = 1 / (grid.points[k].x - grid.points[j].x);
-                a = denominator;
-                b = grid.points[j].x * denominator;
 
-                //multiplication of polynomials a*x + b
-                for(int i = 0; i < j; ++i)
-                {
-                    pBuffer.coefficents[i] = basis.polynomials[k].coefficents[i] * b;
-                    pBuffer.coefficents[i + 1] = basis.polynomials[k].coefficents[i + 1] * a;
-                }
+                monomial.coefficents[1] = denominator;
+                monomial.coefficents[0] = - grid.points[j].x * denominator;
 
-                for(int i = 0; i < j + 1; ++i)
+                PolynomialMultiplication(basis.polynomials[k], monomial, pBuffer);
+
+                for(int i = 0; i < pBuffer.length; ++i)
                 {
                     basis.polynomials[k].coefficents[i] = pBuffer.coefficents[i];
                 }
             }
         }
-        for(int j = 0; j < pLagrange.length; ++j)
-        {
-            basis.polynomials[k].coefficents[j] *= grid.points[k].y;
-        }
     }
-    
-    for(int i = 0; i < basis.length; ++i)
+    for(int i = 0; i < pLagrange.length; ++i)
     {
-    //sum
+        a = 0;
+
+        for(int j = 0; j < basis.length; ++j)
+        {
+            a += basis.polynomials[j].coefficents[i] * grid.points[j].y;
+        }
+
+        pLagrange.coefficents[i] = a;
     }
-
-
 }
 
 void SplineInterpolate()
@@ -48,3 +60,12 @@ void SplineInterpolate()
     
 }
  
+double test(Polynomial &p1, Grid &grid)
+{
+    double err = 0;
+    for(int i = 0; i < p1.length; ++i)
+    {
+        err += fabs(p1.eval(grid.points[i].x) - grid.points[i].y);
+    }
+    return err;
+}
