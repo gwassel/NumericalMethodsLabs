@@ -122,3 +122,10 @@ Basis::Basis(Basis&& other)
     length = other.length;
     other.length = 0;
 }
+
+void test(Polynomial &p1, Grid &grid, std::string label)
+{
+    std::cout << label << "\n";
+    double err1 = CheckOnGridPoints(p1, grid);
+    std::cout << "err:" << err1 << "\n\n";
+}
