@@ -25,7 +25,6 @@ int main()
     MakeMesh(leftBorder, rightBorder, ChebishevGrid, 2, f2);
 
     ReadInit();
-    AllocateMemory();
     ReadData();
 
     LagrangeInterpolate(uniformGrid, basis1, p1, pBuffer, monomial, "Lagrange Polynomial on uniform grid");
@@ -34,7 +33,6 @@ int main()
     SplineInterpolate();
 
     WriteData();
-    FreeMemory();
 
     test(p1, uniformGrid, "Lagrange on uniform grid");
     test(p2, ChebishevGrid, "Lagrange on Chebishev grid");
