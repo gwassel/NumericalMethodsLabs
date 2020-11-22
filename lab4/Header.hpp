@@ -64,12 +64,56 @@ struct Basis
     Basis& operator=(Basis&& other) = delete;
 };
 
+struct TridiagonalMatrix
+{
+    size_t n = 0;
+
+    double* a = nullptr; //subdiagonal
+    double* b = nullptr; //diagonal
+    double* c = nullptr; //superdiagonal
+    double* d = nullptr; //right side vector
+
+    double* x = nullptr;
+
+    double* alpha = nullptr;
+    double* beta = nullptr;
+
+    TridiagonalMatrix(size_t n=0);
+    TridiagonalMatrix(size_t n, double* a, double* b, double* c, double* d);
+    ~TridiagonalMatrix();
+    TridiagonalMatrix(const TridiagonalMatrix& other) = delete;
+    TridiagonalMatrix(TridiagonalMatrix&& other);
+    TridiagonalMatrix& operator=(const TridiagonalMatrix& other) = delete;
+    TridiagonalMatrix& operator=(TridiagonalMatrix&& other) = delete;
+
+    void run();
+};
+
+struct Spline
+{
+    double n = 0;
+
+    double* a = nullptr;
+    double* b = nullptr;
+    double* c = nullptr;
+    double* d = nullptr;
+
+    double* h = nullptr;
+    double* g = nullptr;
+
+    Grid* grid;
+    
+    Spline();
+    ~Spline();
+    Spline(const Spline& other) = delete;
+    Spline(Spline&& other);
+    Spline& operator=(const Spline& other) = delete;
+    Spline& operator=(Spline&& other) = delete;
+};
+
 void ReadInit();
 void AllocateMemory();
 void ReadData();
-
-void MakeUniformMesh();
-void MakeChebishevMesh();//name may be incorrect
 
 void LagrangeInterpolate(Grid &grid, Basis &basis, Polynomial &pLagrange, Polynomial &pBuffer, Polynomial &monomial, std::string label = "");
 void SplineInterpolate();
@@ -78,9 +122,18 @@ double CheckOnGridPoints(Polynomial &p1, Grid &grid);
 void WriteData();
 void FreeMemory();
 
-void MakeMesh(double x0, double xN, Grid &grid, int MeshType);
+void MakeMesh(double x0, double xN, Grid &grid, int MeshType, double (*f)(double));
 void MergeSort(double*& A, int first, int last, int size);
 void Merge(double*& A, int first, int last, int size);
 void WriteCoords(const std::string fileNameOutput, Grid &grid);
 
 void test(Polynomial &p1, Grid &grid, std::string label);
+
+
+
+double f1(double);
+double f2(double);
+double f3(double);
+double f4(double);
+double f5(double);
+double f6(double);

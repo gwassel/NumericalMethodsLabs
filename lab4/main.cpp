@@ -18,9 +18,11 @@ int main()
     Basis basis1 = Basis(size);
     Basis basis2 = Basis(size);
 
+    TridiagonalMatrix splineMatrix;
 
-    MakeMesh(leftBorder, rightBorder, uniformGrid, 1);
-    MakeMesh(leftBorder, rightBorder, ChebishevGrid, 2);
+
+    MakeMesh(leftBorder, rightBorder, uniformGrid, 1, f2);
+    MakeMesh(leftBorder, rightBorder, ChebishevGrid, 2, f2);
 
     ReadInit();
     AllocateMemory();

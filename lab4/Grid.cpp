@@ -8,7 +8,7 @@ bool comparator(Point &p1, Point &p2)
 
 //uniform mesh - 1, Chebyshev mesh - 2
 //PointVector  size = n + 1, must count in x0!
-void MakeMesh(double x0, double xN, Grid &grid, int MeshType) {
+void MakeMesh(double x0, double xN, Grid &grid, int MeshType, double (*f)(double)) {
 	double step;
 	const double PI = 3.1415;
 	if (grid.length != 0) {
@@ -38,7 +38,7 @@ void MakeMesh(double x0, double xN, Grid &grid, int MeshType) {
 	}
 
 	for (int i = 0; i < grid.length; i++) {
-		grid.points[i].y = grid.points[i].x * grid.points[i].x;
+		grid.points[i].y = f(grid.points[i].x);
 	}
 
 	WriteCoords("res/coord.txt", grid);
