@@ -112,95 +112,173 @@ Basis::Basis(Basis&& other)
     other.length = 0;
 }
 
-TridiagonalMatrix::TridiagonalMatrix(size_t n_)
-{
-    n = n_;
-    a = new double[n];
-    b = new double[n];
-    c = new double[n];
-    d = new double[n];
 
-    x = new double[n];
+// TridiagonalMatrix::TridiagonalMatrix(Spline& spline)
+// {
+//     n = spline.n;
+    
+//     a = new double[n];
+//     b = new double[n];
+//     c = new double[n];
+//     d = new double[n];
 
-    alpha = new double[n];
-    beta = new double[n];
-}
-TridiagonalMatrix::TridiagonalMatrix(size_t n_, double* a_, double* b_, double* c_, double* d_)
-{
-    n = n_;
-    a = new double[n];
-    b = new double[n];
-    c = new double[n];
-    d = new double[n];
+//     x = new double[n];
 
-    x = new double[n];
+//     alpha = new double[n];
+//     beta = new double[n];
 
-    alpha = new double[n];
-    beta = new double[n];
+//     a[0] = 0;
+//     b[0] = -2 * (spline.h[0] + spline.h[1]);
+//     c[0] = spline.h[1];
 
-    for(int i = 0; i < n; ++i)
-    {
-        a[i] = a_[i];
-        b[i] = b_[i];
-        c[i] = c_[i];
-        d[i] = d_[i];
-    }
-}
-TridiagonalMatrix::~TridiagonalMatrix()
-{
-    delete[] a;
-    delete[] b;
-    delete[] c;
-    delete[] d;
+//     for(int i = 1; i < n - 2; ++i)
+//     {
+//         a[i] = spline.h[i];
+//         b[i] = -2 * (spline.h[i] + spline.h[i + 1]);
+//         c[i] = spline.h[i + 1];
+//     }
+//     a[n - 2] = spline.h[n - 2];
+//     b[n - 2] = -2 * (spline.h[n - 2] + spline.h[n - 1]);
+//     c[n - 2] = 0;
 
-    delete[] x;
+//     for(int i = 0; i < n - 2; ++i)
+//     {
+//         d[i] = -3 * (spline.g[i + 1] - spline.g[i]);
+//     }
+// }
+// TridiagonalMatrix::~TridiagonalMatrix()
+// {
+//     delete[] a;
+//     delete[] b;
+//     delete[] c;
+//     delete[] d;
 
-    delete[] alpha;
-    delete[] beta;
-}
-TridiagonalMatrix::TridiagonalMatrix(TridiagonalMatrix&& other)
-{
-    n = other.n;
-    a = other.a;
-    b = other.b;
-    c = other.c;
-    d = other.d;
+//     delete[] x;
 
-    x = other.x;
+//     delete[] alpha;
+//     delete[] beta;
+// }
+// TridiagonalMatrix::TridiagonalMatrix(TridiagonalMatrix&& other)
+// {
+//     n = other.n;
+//     a = other.a;
+//     b = other.b;
+//     c = other.c;
+//     d = other.d;
 
-    alpha = other.alpha;
-    beta = other.beta;
+//     x = other.x;
 
-    other.n = 0;
-    other.a = nullptr;
-    other.b = nullptr;
-    other.c = nullptr;
-    other.d = nullptr;
-    other.alpha = nullptr;
-    other.beta = nullptr;
-    other.x = nullptr;
-}
-void TridiagonalMatrix::run()
-{
-    double denominator = 0;
+//     alpha = other.alpha;
+//     beta = other.beta;
 
-    alpha[0] = c[0] / b[0];
-    beta[0] = d[0] / b[0];
+//     other.n = 0;
+//     other.a = nullptr;
+//     other.b = nullptr;
+//     other.c = nullptr;
+//     other.d = nullptr;
+//     other.alpha = nullptr;
+//     other.beta = nullptr;
+//     other.x = nullptr;
+// }
+// void TridiagonalMatrix::run()
+// {
+//     double denominator = 0;
 
-    for(int i = 1; i < n - 1; ++i)
-    {
-        denominator = 1 / (b[i] - a[i] * alpha[i - 1]);
-        alpha[i] = c[i] * denominator;
-        beta[i] = (d[i] + a[i] * beta[i - 1]) * denominator;
-    }
+//     alpha[0] = c[0] / b[0];
+//     beta[0] = d[0] / b[0];
 
-    x[n - 1] = (d[n - 1] + a[n - 1] * beta[n - 2]) / (b[n - 1] - a[n - 1] * alpha[n - 2]);
+//     for(int i = 1; i < n - 1; ++i)
+//     {
+//         denominator = 1 / (b[i] - a[i] * alpha[i - 1]);
+//         alpha[i] = c[i] * denominator;
+//         beta[i] = (d[i] + a[i] * beta[i - 1]) * denominator;
+//     }
 
-    for(int i = n - 2; i >= 0; --i)
-    {
-        x[i] = alpha[i] * x[i + 1] + beta[i];
-    }
-}
+//     x[n - 1] = (d[n - 1] + a[n - 1] * beta[n - 2]) / (b[n - 1] - a[n - 1] * alpha[n - 2]);
+
+//     for(int i = n - 2; i >= 0; --i)
+//     {
+//         x[i] = alpha[i] * x[i + 1] + beta[i];
+//     }
+// }
+
+
+// Spline::Spline()
+// {
+//     n = 0;
+
+//     double* a = nullptr;
+//     double* b = nullptr;
+//     double* c = nullptr;
+//     double* d = nullptr;
+
+//     double* h = nullptr;
+//     double* g = nullptr;
+// }
+// Spline::Spline(Grid& grid)
+// {
+//     n = grid.length - 1;
+
+//     a = new double[n];
+//     b = new double[n];
+//     c = new double[n];
+//     d = new double[n];
+
+//     h = new double[n];
+//     g = new double[n];
+
+//     for(int i = 1; i < n; ++i)
+//     {
+//         h[i] = grid.points[i].x - grid.points[i - 1].x;
+//         g[i] = (grid.points[i].y - grid.points[i - 1].y) / h[i];
+
+//         a[i] = grid.points[i].y;
+//     }
+// }
+
+// Spline::~Spline()
+// {
+//     delete[] a;
+//     delete[] b;
+//     delete[] c;
+//     delete[] d;
+
+//     delete[] h;
+//     delete[] g;
+// }
+
+// Spline::Spline(Spline&& other)
+// {
+//     n = other.n;
+//     a = other.a;
+//     b = other.b;
+//     c = other.c;
+//     d = other.d;
+//     h = other.h;
+//     g = other.g;
+
+//     other.n = 0;
+//     other.a = nullptr;
+//     other.b = nullptr;
+//     other.c = nullptr;
+//     other.d = nullptr;
+//     other.h = nullptr;
+//     other.g = nullptr;
+// }
+// void Spline::RecountCoefficents(TridiagonalMatrix& matrix)
+// {
+//     b[0] = g[0] - matrix.x[0] * h[0] / 3;
+//     d[0] = matrix.x[0] / 3 / h[0];
+
+//     for(int i = 1; i < n - 1; ++i)
+//     {
+//         b[i] = g[i] - (matrix.x[i] + 2 * matrix.x[i - 1]) / 3;
+//         d[i] = (matrix.x[i] - matrix.x[i - 1]) / 3 / h[i];
+//     }
+
+//     b[n - 1] = -matrix.x[n - 1] / 3 / h[n - 1];
+// }
+
 
 void test(Polynomial &p1, Grid &grid, std::string label)
 {

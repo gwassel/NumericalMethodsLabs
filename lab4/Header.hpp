@@ -64,52 +64,81 @@ struct Basis
     Basis& operator=(Basis&& other) = delete;
 };
 
-struct TridiagonalMatrix
-{
-    size_t n = 0;
+// struct TridiagonalMatrix
+// {
+//     size_t n = 0;
 
-    double* a = nullptr; //subdiagonal
-    double* b = nullptr; //diagonal
-    double* c = nullptr; //superdiagonal
-    double* d = nullptr; //right side vector
+//     double* a = nullptr; //subdiagonal
+//     double* b = nullptr; //diagonal
+//     double* c = nullptr; //superdiagonal
+//     double* d = nullptr; //right side vector
 
-    double* x = nullptr;
+//     double* x = nullptr;
 
-    double* alpha = nullptr;
-    double* beta = nullptr;
+//     double* alpha = nullptr;
+//     double* beta = nullptr;
 
-    TridiagonalMatrix(size_t n=0);
-    TridiagonalMatrix(size_t n, double* a, double* b, double* c, double* d);
-    ~TridiagonalMatrix();
-    TridiagonalMatrix(const TridiagonalMatrix& other) = delete;
-    TridiagonalMatrix(TridiagonalMatrix&& other);
-    TridiagonalMatrix& operator=(const TridiagonalMatrix& other) = delete;
-    TridiagonalMatrix& operator=(TridiagonalMatrix&& other) = delete;
+//     TridiagonalMatrix(Spline& spline);
+//     ~TridiagonalMatrix();
+//     TridiagonalMatrix(const TridiagonalMatrix& other) = delete;
+//     TridiagonalMatrix(TridiagonalMatrix&& other);
+//     TridiagonalMatrix& operator=(const TridiagonalMatrix& other) = delete;
+//     TridiagonalMatrix& operator=(TridiagonalMatrix&& other) = delete;
 
-    void run();
-};
+//     void run();
+// };
 
-struct Spline
-{
-    double n = 0;
+// struct Spline
+// {
+//     size_t n = 0;
 
-    double* a = nullptr;
-    double* b = nullptr;
-    double* c = nullptr;
-    double* d = nullptr;
+//     double* a = nullptr;
+//     double* b = nullptr;
+//     double* c = nullptr;
+//     double* d = nullptr;
 
-    double* h = nullptr;
-    double* g = nullptr;
-
-    Grid* grid;
+//     double* h = nullptr;
+//     double* g = nullptr;
     
-    Spline();
-    ~Spline();
-    Spline(const Spline& other) = delete;
-    Spline(Spline&& other);
-    Spline& operator=(const Spline& other) = delete;
-    Spline& operator=(Spline&& other) = delete;
-};
+//     void RecountCoefficents(TridiagonalMatrix& matrix);
+
+//     Spline();
+//     Spline(Grid &grid);
+//     ~Spline();
+//     Spline(const Spline& other) = delete;
+//     Spline(Spline&& other);
+//     Spline& operator=(const Spline& other) = delete;
+//     Spline& operator=(Spline&& other)
+//     {
+//         if (this == &other)
+//             return *this;
+
+//         delete[] a;
+//         delete[] b;
+//         delete[] c;
+//         delete[] d;
+//         delete[] h;
+//         delete[] g;
+
+//         n = other.n;
+//         a = other.a;
+//         b = other.b;
+//         c = other.c;
+//         d = other.d;
+//         h = other.h;
+//         g = other.g;
+
+//         other.n = 0;
+//         other.a = nullptr;
+//         other.b = nullptr;
+//         other.c = nullptr;
+//         other.d = nullptr;
+//         other.h = nullptr;
+//         other.g = nullptr;
+        
+//         return *this;
+//     }
+// };
 
 void ReadInit();
 void AllocateMemory();
@@ -131,6 +160,7 @@ void test(Polynomial &p1, Grid &grid, std::string label);
 double CountError(Polynomial &p, Grid &testGrid, double (*f)(double), double leftBorder, double rightBorder);
 
 
+//Count functions
 double f1(double);
 double f2(double);
 double f3(double);

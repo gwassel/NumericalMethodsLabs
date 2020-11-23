@@ -23,7 +23,9 @@ int main()
     Basis basis1 = Basis(size);
     Basis basis2 = Basis(size);
 
-    TridiagonalMatrix splineMatrix;
+    // Spline s1;
+
+
     double (*f)(double) = f2; //init function to interpolate
 
     MakeMesh(leftBorder, rightBorder, uniformGrid, 1, f);
@@ -35,12 +37,18 @@ int main()
     LagrangeInterpolate(uniformGrid, basis1, p1, pBuffer, monomial, "Lagrange Polynomial on uniform grid");
     LagrangeInterpolate(ChebishevGrid, basis2, p2, pBuffer, monomial, "Lagrange Polynomial on Chebishev grid");
 
+    // s1 = Spline(uniformGrid);
+    // TridiagonalMatrix splineMatrix(s1);
+    // splineMatrix.run();
+    // s1.RecountCoefficents(splineMatrix);
+
     SplineInterpolate();
 
     WriteData();
 
     test(p1, uniformGrid, "Lagrange on uniform grid");
     test(p2, ChebishevGrid, "Lagrange on Chebishev grid");
+
     double err = CountError(p1, testGrid, f, leftBorder, rightBorder);
     std::cout << "err on " << testSize - 1 << " grid = " << err << "\n";
     return 0;
