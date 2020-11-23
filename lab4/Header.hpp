@@ -128,7 +128,7 @@ void Merge(double*& A, int first, int last, int size);
 void WriteCoords(const std::string fileNameOutput, Grid &grid);
 
 void test(Polynomial &p1, Grid &grid, std::string label);
-
+double CountError(Polynomial &p, Grid &testGrid, double (*f)(double), double leftBorder, double rightBorder);
 
 
 double f1(double);

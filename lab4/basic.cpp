@@ -6,11 +6,6 @@ void ReadInit()
 
 }
 
-void AllocateMemory()
-{
-    
-}
-
 void ReadData()
 {
     
@@ -20,12 +15,6 @@ void WriteData()
 {
     
 }
-
-void FreeMemory()
-{
-
-}
-
 
 void WriteCoords(const std::string fileNameOutput, Grid &grid)
 {
@@ -219,3 +208,23 @@ void test(Polynomial &p1, Grid &grid, std::string label)
     double err1 = CheckOnGridPoints(p1, grid);
     std::cout << "err:" << err1 << "\n\n";
 }
+
+double CountError(Polynomial &p, Grid &testGrid, double (*f)(double), double leftBorder, double rightBorder)
+{
+    double error = 0;
+    double errIterations = 0;
+    
+    MakeMesh(leftBorder, rightBorder, testGrid, 1, f);
+
+    for(int i = 0; i < testGrid.length; ++i)
+    {
+        errIterations = fabs(p.eval(testGrid.points[i].x) - testGrid.points[i].y);
+        if( errIterations > error )
+        {
+            error = errIterations;
+        }
+    }    
+
+    return error;
+}
+
