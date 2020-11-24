@@ -21,12 +21,36 @@ void WriteCoords(const std::string fileNameOutput, Grid &grid)
 	std::ofstream fileOutput;
 	fileOutput.open(fileNameOutput);
 
+    
 	for (int i = 0; i < grid.length; ++i)
 	{
 		fileOutput << grid.points[i].x << " " << grid.points[i].y << "\n";
 	}
+    fileOutput.close();
 }
 
+void WriteSpline(const std::string fileNameOutput, Spline &spline)
+{
+    std::ofstream fileOutput;
+	fileOutput.open(fileNameOutput);
+
+    double iterX = spline.x0;
+    double borderX = spline.x0;
+    fileOutput << "{";
+    for(int i = 0; i < spline.n; ++i)
+    {   
+        while (iterX < borderX + spline.h[i])
+        {
+            fileOutput << "{" << iterX << ", " << spline.eval(iterX) << "}, \n";
+            iterX += spline.h[i]/10;
+        }
+
+        borderX += spline.h[i];
+        iterX = borderX;
+    }
+    fileOutput << "}";
+    fileOutput.close();
+}
 
 Point::Point(double x_ /*= 1*/, double y_ /*= 1*/)
 {
@@ -113,172 +137,204 @@ Basis::Basis(Basis&& other)
 }
 
 
-// TridiagonalMatrix::TridiagonalMatrix(Spline& spline)
-// {
-//     n = spline.n;
+TridiagonalMatrix::TridiagonalMatrix(double* &h, double* &g, size_t n_)// n - size of h
+{
+    n = n_ - 1;
     
-//     a = new double[n];
-//     b = new double[n];
-//     c = new double[n];
-//     d = new double[n];
+    a = new double[n];
+    b = new double[n];
+    c = new double[n];
+    d = new double[n];
 
-//     x = new double[n];
+    x = new double[n];
 
-//     alpha = new double[n];
-//     beta = new double[n];
-
-//     a[0] = 0;
-//     b[0] = -2 * (spline.h[0] + spline.h[1]);
-//     c[0] = spline.h[1];
-
-//     for(int i = 1; i < n - 2; ++i)
-//     {
-//         a[i] = spline.h[i];
-//         b[i] = -2 * (spline.h[i] + spline.h[i + 1]);
-//         c[i] = spline.h[i + 1];
-//     }
-//     a[n - 2] = spline.h[n - 2];
-//     b[n - 2] = -2 * (spline.h[n - 2] + spline.h[n - 1]);
-//     c[n - 2] = 0;
-
-//     for(int i = 0; i < n - 2; ++i)
-//     {
-//         d[i] = -3 * (spline.g[i + 1] - spline.g[i]);
-//     }
-// }
-// TridiagonalMatrix::~TridiagonalMatrix()
-// {
-//     delete[] a;
-//     delete[] b;
-//     delete[] c;
-//     delete[] d;
-
-//     delete[] x;
-
-//     delete[] alpha;
-//     delete[] beta;
-// }
-// TridiagonalMatrix::TridiagonalMatrix(TridiagonalMatrix&& other)
-// {
-//     n = other.n;
-//     a = other.a;
-//     b = other.b;
-//     c = other.c;
-//     d = other.d;
-
-//     x = other.x;
-
-//     alpha = other.alpha;
-//     beta = other.beta;
-
-//     other.n = 0;
-//     other.a = nullptr;
-//     other.b = nullptr;
-//     other.c = nullptr;
-//     other.d = nullptr;
-//     other.alpha = nullptr;
-//     other.beta = nullptr;
-//     other.x = nullptr;
-// }
-// void TridiagonalMatrix::run()
-// {
-//     double denominator = 0;
-
-//     alpha[0] = c[0] / b[0];
-//     beta[0] = d[0] / b[0];
-
-//     for(int i = 1; i < n - 1; ++i)
-//     {
-//         denominator = 1 / (b[i] - a[i] * alpha[i - 1]);
-//         alpha[i] = c[i] * denominator;
-//         beta[i] = (d[i] + a[i] * beta[i - 1]) * denominator;
-//     }
-
-//     x[n - 1] = (d[n - 1] + a[n - 1] * beta[n - 2]) / (b[n - 1] - a[n - 1] * alpha[n - 2]);
-
-//     for(int i = n - 2; i >= 0; --i)
-//     {
-//         x[i] = alpha[i] * x[i + 1] + beta[i];
-//     }
-// }
+    alpha = new double[n];
+    beta = new double[n];
 
 
-// Spline::Spline()
-// {
-//     n = 0;
+    for(int i = 1; i < n; ++i)
+    {
+        a[i] = h[i];
+    }
 
-//     double* a = nullptr;
-//     double* b = nullptr;
-//     double* c = nullptr;
-//     double* d = nullptr;
+    for(int i = 0; i < n - 1; ++i)
+    {
+        c[i] = h[i + 1];
+    }
 
-//     double* h = nullptr;
-//     double* g = nullptr;
-// }
-// Spline::Spline(Grid& grid)
-// {
-//     n = grid.length - 1;
+    for(int i = 0; i < n; ++i)
+    {
+        b[i] = 2 * (h[i] + h[i + 1]);
+    }
 
-//     a = new double[n];
-//     b = new double[n];
-//     c = new double[n];
-//     d = new double[n];
+    for(int i = 0; i < n; ++i)
+    {
+        d[i] = 3 * (g[i + 1] - g[i]);
+    }
+}
+TridiagonalMatrix::~TridiagonalMatrix()
+{
+    delete[] a;
+    delete[] b;
+    delete[] c;
+    delete[] d;
 
-//     h = new double[n];
-//     g = new double[n];
+    delete[] x;
 
-//     for(int i = 1; i < n; ++i)
-//     {
-//         h[i] = grid.points[i].x - grid.points[i - 1].x;
-//         g[i] = (grid.points[i].y - grid.points[i - 1].y) / h[i];
+    delete[] alpha;
+    delete[] beta;
+}
+TridiagonalMatrix::TridiagonalMatrix(TridiagonalMatrix&& other)
+{
+    n = other.n;
+    a = other.a;
+    b = other.b;
+    c = other.c;
+    d = other.d;
 
-//         a[i] = grid.points[i].y;
-//     }
-// }
+    x = other.x;
 
-// Spline::~Spline()
-// {
-//     delete[] a;
-//     delete[] b;
-//     delete[] c;
-//     delete[] d;
+    alpha = other.alpha;
+    beta = other.beta;
 
-//     delete[] h;
-//     delete[] g;
-// }
+    other.n = 0;
+    other.a = nullptr;
+    other.b = nullptr;
+    other.c = nullptr;
+    other.d = nullptr;
+    other.alpha = nullptr;
+    other.beta = nullptr;
+    other.x = nullptr;
+}
+void TridiagonalMatrix::run()
+{
+    double denominator = 0;
 
-// Spline::Spline(Spline&& other)
-// {
-//     n = other.n;
-//     a = other.a;
-//     b = other.b;
-//     c = other.c;
-//     d = other.d;
-//     h = other.h;
-//     g = other.g;
+    for(int i = 0; i < n; ++i)
+    {
+        b[i] = -b[i];
+        d[i] = -d[i];
+    }
 
-//     other.n = 0;
-//     other.a = nullptr;
-//     other.b = nullptr;
-//     other.c = nullptr;
-//     other.d = nullptr;
-//     other.h = nullptr;
-//     other.g = nullptr;
-// }
-// void Spline::RecountCoefficents(TridiagonalMatrix& matrix)
-// {
-//     b[0] = g[0] - matrix.x[0] * h[0] / 3;
-//     d[0] = matrix.x[0] / 3 / h[0];
+    alpha[1] = c[0] / b[0];
+    beta[1] = d[0] / b[0];
+    std::cout << alpha[1] << " alpha 1\n";
 
-//     for(int i = 1; i < n - 1; ++i)
-//     {
-//         b[i] = g[i] - (matrix.x[i] + 2 * matrix.x[i - 1]) / 3;
-//         d[i] = (matrix.x[i] - matrix.x[i - 1]) / 3 / h[i];
-//     }
+    for(int i = 1; i < n - 1; ++i)
+    {
+        denominator = 1 / (b[i] - a[i] * alpha[i]);
+        alpha[i + 1] = c[i] * denominator;
+        beta[i + 1] = (d[i] + a[i] * beta[i]) * denominator;
+    }
 
-//     b[n - 1] = -matrix.x[n - 1] / 3 / h[n - 1];
-// }
+    x[n - 1] = (d[n - 1] + a[n - 1] * beta[n - 1]) / (b[n - 1] - a[n - 1] * alpha[n - 1]);
 
+    for(int i = n - 2; i >= 0; --i)
+    {
+        x[i] = alpha[i + 1] * x[i + 1] + beta[i + 1];
+    }
+
+    for(int i = 0; i < n - 1; ++i)
+    {
+        std::cout << x[i] << " ";
+    }
+    std::cout << "\n";
+}
+
+
+Spline::Spline()
+{
+    n = 0;
+
+    double* a = nullptr;
+    double* b = nullptr;
+    double* c = nullptr;
+    double* d = nullptr;
+
+    double* h = nullptr;
+    double* g = nullptr;
+}
+Spline::Spline(Grid& grid)
+{
+    n = grid.length - 1;
+
+    x0 = grid.points[0].x;
+
+    a = new double[n];
+    b = new double[n];
+    c = new double[n];
+    d = new double[n];
+
+    h = new double[n];
+    g = new double[n];
+
+    for(int i = 0; i < n; ++i)
+    {
+        h[i] = grid.points[i + 1].x - grid.points[i].x;
+        g[i] = (grid.points[i + 1].y - grid.points[i].y) / h[i];
+        a[i] = grid.points[i].y;
+    }
+}
+
+Spline::~Spline()
+{
+    delete[] a;
+    delete[] b;
+    delete[] c;
+    delete[] d;
+
+    delete[] h;
+    delete[] g;
+}
+
+Spline::Spline(Spline&& other)
+{
+    n = other.n;
+    a = other.a;
+    b = other.b;
+    c = other.c;
+    d = other.d;
+    h = other.h;
+    g = other.g;
+
+    other.n = 0;
+    other.a = nullptr;
+    other.b = nullptr;
+    other.c = nullptr;
+    other.d = nullptr;
+    other.h = nullptr;
+    other.g = nullptr;
+}
+void Spline::RecountCoefficents(TridiagonalMatrix& matrix)
+{
+    b[0] = g[0] - matrix.x[0] * h[0] / 3;
+    d[0] = matrix.x[0] / 3 / h[0];
+
+    for(int i = 1; i < n - 1; ++i)
+    {
+        b[i] = g[i] - (matrix.x[i] + 2 * matrix.x[i - 1]) / 3;
+        d[i] = (matrix.x[i] - matrix.x[i - 1]) / 3 / h[i];
+    }
+
+    b[n - 1] = g[n - 1] - 2 * matrix.x[n - 1] / 3 * h[n - 1];
+
+    c[0] = 0;
+    for(int i = 1; i < n - 1; ++i)
+    {
+        c[i] = matrix.x[i - 1];
+    }
+}
+double Spline::eval(double x)
+{
+    int i = 0;
+    double iterX = x0;
+    while(iterX <= x)
+    {
+        iterX += h[i++];
+    }
+    --i;
+    return a[i] + b[i] * (x - iterX) + c[i] * pow((x - iterX), 2) + d[i] * pow((x - iterX), 3);
+}
 
 void test(Polynomial &p1, Grid &grid, std::string label)
 {
@@ -297,6 +353,24 @@ double CountError(Polynomial &p, Grid &testGrid, double (*f)(double), double lef
     for(int i = 0; i < testGrid.length; ++i)
     {
         errIterations = fabs(p.eval(testGrid.points[i].x) - testGrid.points[i].y);
+        if( errIterations > error )
+        {
+            error = errIterations;
+        }
+    }    
+
+    return error;
+}
+double CountError(Spline &spline, Grid &testGrid, double (*f)(double), double leftBorder, double rightBorder)
+{
+    double error = 0;
+    double errIterations = 0;
+    
+    MakeMesh(leftBorder, rightBorder, testGrid, 1, f);
+
+    for(int i = 0; i < testGrid.length; ++i)
+    {
+        errIterations = fabs(spline.eval(testGrid.points[i].x) - testGrid.points[i].y);
         if( errIterations > error )
         {
             error = errIterations;

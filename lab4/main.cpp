@@ -23,7 +23,7 @@ int main()
     Basis basis1 = Basis(size);
     Basis basis2 = Basis(size);
 
-    // Spline s1;
+    Spline s1;
 
 
     double (*f)(double) = f2; //init function to interpolate
@@ -37,10 +37,12 @@ int main()
     LagrangeInterpolate(uniformGrid, basis1, p1, pBuffer, monomial, "Lagrange Polynomial on uniform grid");
     LagrangeInterpolate(ChebishevGrid, basis2, p2, pBuffer, monomial, "Lagrange Polynomial on Chebishev grid");
 
-    // s1 = Spline(uniformGrid);
-    // TridiagonalMatrix splineMatrix(s1);
-    // splineMatrix.run();
-    // s1.RecountCoefficents(splineMatrix);
+    s1 = Spline(uniformGrid);
+    TridiagonalMatrix splineMatrix(s1.h, s1.g, s1.n + 1);
+    splineMatrix.run();
+    s1.RecountCoefficents(splineMatrix);
+    for(int i = 0; i < s1.n; ++i)
+        std::cout << "a: " << s1.a[i] << " b: " << s1.b[i] << " c: " << s1.c[i] << " d: " << s1.d[i] << "\n";
 
     SplineInterpolate();
 
@@ -51,5 +53,10 @@ int main()
 
     double err = CountError(p1, testGrid, f, leftBorder, rightBorder);
     std::cout << "err on " << testSize - 1 << " grid = " << err << "\n";
+    err = CountError(s1, testGrid, f, leftBorder, rightBorder);
+    std::cout << "err on " << testSize - 1 << " grid = " << err << "\n";
+
+    WriteSpline("spline.xdd", s1);
+
     return 0;
 }
