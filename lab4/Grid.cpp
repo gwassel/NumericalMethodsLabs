@@ -34,7 +34,7 @@ void MakeMesh(double x0, double xN, Grid &grid, int MeshType, double (*f)(double
 			grid.points[i].x = A + B * cos(PI * (2.0 * i + 1.0) / C);
 		}
 		//sort
-		std::sort(grid.points, grid.points + grid.length, comparator);
+		//std::sort(grid.points, grid.points + grid.length, comparator);
 	}
 
 	for (int i = 0; i < grid.length; i++) {

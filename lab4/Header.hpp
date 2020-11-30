@@ -4,6 +4,10 @@
 #include <fstream>
 #include <algorithm>
 
+#include "stdio.h"
+#include "string.h"
+#include "math.h"
+
 struct Point
 {
     double x = 0;
@@ -85,6 +89,7 @@ struct TridiagonalMatrix
     TridiagonalMatrix& operator=(const TridiagonalMatrix& other) = delete;
     TridiagonalMatrix& operator=(TridiagonalMatrix&& other) = delete;
 
+    void eval();
     void run();
 };
 
@@ -159,6 +164,7 @@ void MergeSort(double*& A, int first, int last, int size);
 void Merge(double*& A, int first, int last, int size);
 void WriteCoords(const std::string fileNameOutput, Grid &grid);
 void WriteSpline(const std::string fileNameOutput, Spline &spline);
+void WritePolynomial(const std::string fileNameOutput, Polynomial &p1, Grid &grid);
 
 void test(Polynomial &p1, Grid &grid, std::string label);
 double CountError(Polynomial &p, Grid &testGrid, double (*f)(double), double leftBorder, double rightBorder);
@@ -171,3 +177,6 @@ double f3(double);
 double f4(double);
 double f5(double);
 double f6(double);
+
+
+int MakeSpline(Grid &grid);

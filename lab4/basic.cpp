@@ -29,6 +29,20 @@ void WriteCoords(const std::string fileNameOutput, Grid &grid)
     fileOutput.close();
 }
 
+void WritePolynomial(const std::string fileNameOutput, Polynomial &p1, Grid &grid)
+{
+    std::ofstream fileOutput;
+	fileOutput.open(fileNameOutput);
+
+    fileOutput << "{";
+	for (int i = 0; i < grid.length; ++i)
+	{
+		fileOutput << std::fixed << "{" << grid.points[i].x << ", " << p1.eval(grid.points[i].x) << "},\n";
+	}
+    fileOutput << "}";
+    fileOutput.close();
+}
+
 void WriteSpline(const std::string fileNameOutput, Spline &spline)
 {
     std::ofstream fileOutput;
@@ -206,39 +220,31 @@ TridiagonalMatrix::TridiagonalMatrix(TridiagonalMatrix&& other)
     other.beta = nullptr;
     other.x = nullptr;
 }
+void TridiagonalMatrix::eval()
+{
+    // for(int i = 0; i < n; ++i)
+    // {
+    //     b[i] = -b[i];
+    //     d[i] = -d[i];
+    // }
+}
 void TridiagonalMatrix::run()
 {
     double denominator = 0;
 
-    for(int i = 0; i < n; ++i)
-    {
-        b[i] = -b[i];
-        d[i] = -d[i];
-    }
-
-    alpha[1] = c[0] / b[0];
-    beta[1] = d[0] / b[0];
-    std::cout << alpha[1] << " alpha 1\n";
-
     for(int i = 1; i < n - 1; ++i)
     {
-        denominator = 1 / (b[i] - a[i] * alpha[i]);
-        alpha[i + 1] = c[i] * denominator;
-        beta[i + 1] = (d[i] + a[i] * beta[i]) * denominator;
+        denominator = a[i]/b[i-1];
+        b[i] = b[i] - denominator * c[i-1];
+        d[i] = d[i] - denominator * d[i-1];
     }
 
-    x[n - 1] = (d[n - 1] + a[n - 1] * beta[n - 1]) / (b[n - 1] - a[n - 1] * alpha[n - 1]);
+    x[n-2] = d[n-2]/b[n-2];
 
-    for(int i = n - 2; i >= 0; --i)
+    for(int i = n - 3; i >= 0; --i)
     {
-        x[i] = alpha[i + 1] * x[i + 1] + beta[i + 1];
+        x[i] = (d[i] - c[i]*x[i+1])/b[i];
     }
-
-    for(int i = 0; i < n - 1; ++i)
-    {
-        std::cout << x[i] << " ";
-    }
-    std::cout << "\n";
 }
 
 
@@ -297,6 +303,7 @@ Spline::Spline(Spline&& other)
     h = other.h;
     g = other.g;
 
+    
     other.n = 0;
     other.a = nullptr;
     other.b = nullptr;
@@ -319,7 +326,7 @@ void Spline::RecountCoefficents(TridiagonalMatrix& matrix)
     b[n - 1] = g[n - 1] - 2 * matrix.x[n - 1] / 3 * h[n - 1];
 
     c[0] = 0;
-    for(int i = 1; i < n - 1; ++i)
+    for(int i = 1; i < n; ++i)
     {
         c[i] = matrix.x[i - 1];
     }
