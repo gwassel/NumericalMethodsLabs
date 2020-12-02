@@ -41,6 +41,13 @@ void LagrangeInterpolate(Grid &grid, Basis &basis, Polynomial &pLagrange, Polyno
                 }
             }
         }
+        // for(int i = 0; i < basis.polynomials[k].length; ++i)
+        // {
+        //     if(basis.polynomials[k].coefficents[i] < 1e-15)
+        //     {
+        //         basis.polynomials[k].coefficents[i] = 0;
+        //     }
+        // }
     }
     for(int i = 0; i < pLagrange.length; ++i)
     {
