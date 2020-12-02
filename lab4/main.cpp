@@ -3,8 +3,7 @@
 int main()
 {
     //init variables
-    size_t n = 7;
-    size_t size = n + 1;
+    size_t size = 8; //number of Nodes
     size_t testSize = 1024 + 1;
 
     double leftBorder = -1;
