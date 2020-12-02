@@ -1,7 +1,7 @@
 all: compile
 
-compile: main.o basic.o Interpolation.o Grid.o functions.o
-	g++ -g main.o basic.o Interpolation.o Grid.o functions.o
+compile: main.o basic.o Interpolation.o Grid.o functions.o Lagrange.o
+	g++ -g main.o basic.o Interpolation.o Grid.o functions.o Lagrange.o
 
 main.o: main.cpp
 	g++ -g -c main.cpp
@@ -17,6 +17,9 @@ Grid.o: Grid.cpp
 
 functions.o: functions.cpp
 	g++ -g -c functions.cpp
+
+Lagrange.o: Lagrange.cpp
+	g++ -g -c Lagrange.cpp
 
 clean:
 	rm -rf *.o compile

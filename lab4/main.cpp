@@ -3,7 +3,7 @@
 int main()
 {
     //init variables
-    size_t n = 30;
+    size_t n = 7;
     size_t size = n + 1;
     size_t testSize = 1024 + 1;
 
@@ -13,6 +13,10 @@ int main()
     //non init variables
     Grid uniformGrid = Grid(size);
     Grid ChebishevGrid = Grid(size);
+
+    Grid lagrangeGrid1 = Grid(testSize);
+    Grid lagrangeGrid2 = Grid(testSize);
+
     Grid testGrid = Grid(testSize);
 
     // Grid splineGrid = Grid(6);
@@ -23,62 +27,59 @@ int main()
     // splineGrid.points[4] = {5,0.1};
     // splineGrid.points[5] = {6,0.23975};
 
-    Grid splineGrid = Grid(3);
-    splineGrid.points[0] = {0,1};
-    splineGrid.points[1] = {3,2};
-    splineGrid.points[2] = {8,3};
+    // Grid splineGrid = Grid(6);
+    // splineGrid.points[0] = {0,1};
+    // splineGrid.points[1] = {3,2};
+    // splineGrid.points[2] = {8,3};
+    // splineGrid.points[3] = {15,4};
+    // splineGrid.points[4] = {24,5};
+    // splineGrid.points[5] = {35,6};
 
-    Polynomial p1 = Polynomial(size);
-    Polynomial p2 = Polynomial(size);
-    Polynomial pBuffer = Polynomial(size);
-    Polynomial monomial = Polynomial(2);
-    
-    Basis basis1 = Basis(size);
-    Basis basis2 = Basis(size);
+    // Grid splineGrid = Grid(3);
+    // splineGrid.points[0] = {0, 1};
+    // splineGrid.points[1] = {0.6, cos(0.6 * 0.6)};
+    // splineGrid.points[2] = {0.9, cos(0.9 * 0.9)};
+    // splineGrid.points[3] = {1.2, cos(1.2 * 1.2)};
+
 
     Spline s1;
 
 
-    double (*f)(double) = f1; //init function to interpolate
+    double (*f)(double) = f7; //init function to interpolate
 
-    // MakeMesh(leftBorder, rightBorder, uniformGrid, 1, f);
-    // MakeMesh(leftBorder, rightBorder, uniformGrid, 1, f);
+    MakeMesh(leftBorder, rightBorder, lagrangeGrid1, 1, f0);
+    MakeMesh(leftBorder, rightBorder, lagrangeGrid2, 1, f0);
+
+    MakeMesh(leftBorder, rightBorder, uniformGrid, 1, f);
     MakeMesh(leftBorder, rightBorder, ChebishevGrid, 2, f);
 
-    ReadInit();
-    ReadData();
+    LagrangeInterpolate(uniformGrid, lagrangeGrid1);
+    LagrangeInterpolate(ChebishevGrid, lagrangeGrid2);
 
-    // LagrangeInterpolate(uniformGrid, basis1, p1, pBuffer, monomial, "Lagrange Polynomial on uniform grid");
-    LagrangeInterpolate(ChebishevGrid, basis2, p2, pBuffer, monomial, "Lagrange Polynomial on Chebishev grid");
+    LagrangeOut(lagrangeGrid1, "lagrange1");
+    LagrangeOut(lagrangeGrid2, "lagrange2");
 
-    s1 = Spline(splineGrid);
+
+    double err1 = 0;
+    double err2 = 0;
+    err1 = CountError(lagrangeGrid1, f);
+    err2 = CountError(lagrangeGrid2, f);
+
+    std::cout << "err on uniform: " << err1 << "\nerr on Chebishev: " << err2 << "\n";
+//lagrange ends
+
+
+    s1 = Spline(uniformGrid);
     TridiagonalMatrix splineMatrix(s1.h, s1.g, s1.n + 1);
     splineMatrix.eval();
     splineMatrix.run();
     s1.RecountCoefficents(splineMatrix);
-    for(int i = 0; i < s1.n; ++i)
-        std::cout << "a: " << s1.a[i] << " b: " << s1.b[i] << " c: " << s1.c[i] << " d: " << s1.d[i] << "\n";
+    // for(int i = 0; i < s1.n; ++i)
+    //     std::cout << "a: " << s1.a[i] << " b: " << s1.b[i] << " c: " << s1.c[i] << " d: " << s1.d[i] << "\n";
 
-
-    SplineInterpolate();
-
-    WriteData();
-
-    // test(p1, uniformGrid, "Lagrange on uniform grid");
-    test(p2, ChebishevGrid, "Lagrange on Chebishev grid");
-
-
-    // double err;
-    // err = CountError(p1, testGrid, f, leftBorder, rightBorder);
-    // std::cout << "err on " << testSize - 1 << " grid = " << err << "\n";
-    // err = CountError(p2, testGrid, f, leftBorder, rightBorder);
-    // std::cout << "err on " << testSize - 1 << " grid = " << err << "\n";
-    
-    // WriteSpline("spline.xdd", s1);
-    // WritePolynomial("lagrangexd", p2, testGrid);
-
-
-
+    WriteSpline("splineout", s1);
+    double errspline = CountError(s1, f);
+    std::cout << "err on spline: " << errspline << "\n";
     // std::cout << s1.eval(0) << "\n";
     return 0;
 }

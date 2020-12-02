@@ -47,22 +47,26 @@ void WriteSpline(const std::string fileNameOutput, Spline &spline)
 {
     std::ofstream fileOutput;
 	fileOutput.open(fileNameOutput);
-
-    double iterX = spline.x0;
-    double borderX = spline.x0;
-    fileOutput << "{";
+    size_t stepSize = 25;
+    double x0 = spline.x[0];
+    double x1 = spline.x[1];
+    double step = (x1 - x0) / stepSize;
+    double xcurrent;
     for(int i = 0; i < spline.n; ++i)
     {   
-        while (iterX < borderX + spline.h[i])
+        double x0 = spline.x[i];
+        double x1 = spline.x[i+1];
+        double step = (x1 - x0) / stepSize;
+        xcurrent = x0;
+        for(int j = 0; j <= stepSize; ++j)
         {
-            fileOutput << "{" << iterX << ", " << spline.eval(iterX) << "}, \n";
-            iterX += spline.h[i]/10;
+            fileOutput << xcurrent << " " << spline.a[i] + spline.b[i] * (xcurrent - x0) + spline.c[i] * pow((xcurrent - x0), 2) + spline.d[i] * pow(xcurrent - x0,3) << "\n";
+            xcurrent += step;
         }
-
-        borderX += spline.h[i];
-        iterX = borderX;
     }
-    fileOutput << "}";
+    xcurrent = spline.x[spline.n];
+    x0 = spline.x[spline.n-1];
+    fileOutput << xcurrent << " " << spline.a[spline.n-1] + spline.b[spline.n-1] * (xcurrent - x0) + spline.c[spline.n-1] * pow((xcurrent - x0), 2) + spline.d[spline.n-1] * pow(xcurrent - x0,3) << "\n";
     fileOutput.close();
 }
 
@@ -259,12 +263,12 @@ Spline::Spline()
 
     double* h = nullptr;
     double* g = nullptr;
+
+    double* x = nullptr;
 }
 Spline::Spline(Grid& grid)
 {
     n = grid.length - 1;
-
-    x0 = grid.points[0].x;
 
     a = new double[n];
     b = new double[n];
@@ -274,12 +278,17 @@ Spline::Spline(Grid& grid)
     h = new double[n];
     g = new double[n];
 
+    x = new double[n+1];
+
+
     for(int i = 0; i < n; ++i)
     {
+        x[i] = grid.points[i].x;
         h[i] = grid.points[i + 1].x - grid.points[i].x;
         g[i] = (grid.points[i + 1].y - grid.points[i].y) / h[i];
         a[i] = grid.points[i].y;
     }
+    x[n]  = grid.points[n].x;
 }
 
 Spline::~Spline()
@@ -291,6 +300,8 @@ Spline::~Spline()
 
     delete[] h;
     delete[] g;
+
+    delete[] x;
 }
 
 Spline::Spline(Spline&& other)
@@ -303,6 +314,7 @@ Spline::Spline(Spline&& other)
     h = other.h;
     g = other.g;
 
+    x = other.x;
     
     other.n = 0;
     other.a = nullptr;
@@ -311,36 +323,39 @@ Spline::Spline(Spline&& other)
     other.d = nullptr;
     other.h = nullptr;
     other.g = nullptr;
+    other.x = nullptr;
 }
 void Spline::RecountCoefficents(TridiagonalMatrix& matrix)
 {
     b[0] = g[0] - matrix.x[0] * h[0] / 3;
     d[0] = matrix.x[0] / 3 / h[0];
-
-    for(int i = 1; i < n - 1; ++i)
-    {
-        b[i] = g[i] - (matrix.x[i] + 2 * matrix.x[i - 1]) / 3;
-        d[i] = (matrix.x[i] - matrix.x[i - 1]) / 3 / h[i];
-    }
-
-    b[n - 1] = g[n - 1] - 2 * matrix.x[n - 1] / 3 * h[n - 1];
-
     c[0] = 0;
+
     for(int i = 1; i < n; ++i)
     {
         c[i] = matrix.x[i - 1];
     }
+
+    for(int i = 1; i < n - 1; ++i)
+    {
+        b[i] = g[i] - (c[i+1] + 2.0 * c[i]) / 3.0 * h[i];
+        d[i] = (c[i+1] - c[i]) / 3.0 / h[i];
+    }
+
+    b[n - 1] = g[n - 1] - 2 * matrix.x[n - 2] / 3 * h[n - 1];
+
+    d[n - 1] = -1.0 / 3.0 / h[n - 1] * c[n - 1];
 }
-double Spline::eval(double x)
+double Spline::eval(double x_)
 {
     int i = 0;
-    double iterX = x0;
-    while(iterX <= x)
+    while(x[i] < x_)
     {
-        iterX += h[i++];
+        x_ = x[i];
+        ++i;
     }
     --i;
-    return a[i] + b[i] * (x - iterX) + c[i] * pow((x - iterX), 2) + d[i] * pow((x - iterX), 3);
+    return a[i] + b[i] * (x_ - x[i]) + c[i] * pow((x_ - x[i]), 2) + d[i] * pow((x_ - x[i]), 3);
 }
 
 void test(Polynomial &p1, Grid &grid, std::string label)
@@ -368,22 +383,31 @@ double CountError(Polynomial &p, Grid &testGrid, double (*f)(double), double lef
 
     return error;
 }
-double CountError(Spline &spline, Grid &testGrid, double (*f)(double), double leftBorder, double rightBorder)
+double CountError(Spline &spline, double (*f)(double))
 {
-    double error = 0;
-    double errIterations = 0;
-    
-    MakeMesh(leftBorder, rightBorder, testGrid, 1, f);
-
-    for(int i = 0; i < testGrid.length; ++i)
-    {
-        errIterations = fabs(spline.eval(testGrid.points[i].x) - testGrid.points[i].y);
-        if( errIterations > error )
+    size_t stepSize = 25;
+    double x0 = spline.x[0];
+    double x1 = spline.x[1];
+    double step = (x1 - x0) / stepSize;
+    double xcurrent;
+    double err = 0;
+    double errIter = 0;
+    for(int i = 0; i < spline.n; ++i)
+    {   
+        double x0 = spline.x[i];
+        double x1 = spline.x[i+1];
+        double step = (x1 - x0) / stepSize;
+        xcurrent = x0;
+        for(int j = 0; j <= stepSize; ++j)
         {
-            error = errIterations;
+            errIter = fabs(spline.a[i] + spline.b[i] * (xcurrent - x0) + spline.c[i] * pow((xcurrent - x0), 2) + spline.d[i] * pow(xcurrent - x0,3) - f(xcurrent));
+            if(errIter > err)
+            {
+                err = errIter;
+            }
+            xcurrent += step;
         }
-    }    
-
-    return error;
+    }
+    return err;
 }
 

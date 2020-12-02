@@ -104,6 +104,8 @@ struct Spline
     double* c = nullptr;
     double* d = nullptr;
 
+    double* x = nullptr;
+
     double* h = nullptr;
     double* g = nullptr;
     
@@ -126,6 +128,7 @@ struct Spline
         delete[] d;
         delete[] h;
         delete[] g;
+        delete[] x;
 
         n = other.n;
         a = other.a;
@@ -134,6 +137,7 @@ struct Spline
         d = other.d;
         h = other.h;
         g = other.g;
+        x = other.x;
 
         other.n = 0;
         other.a = nullptr;
@@ -142,6 +146,7 @@ struct Spline
         other.d = nullptr;
         other.h = nullptr;
         other.g = nullptr;
+        other.x = nullptr;
         
         return *this;
     }
@@ -167,16 +172,24 @@ void WriteSpline(const std::string fileNameOutput, Spline &spline);
 void WritePolynomial(const std::string fileNameOutput, Polynomial &p1, Grid &grid);
 
 void test(Polynomial &p1, Grid &grid, std::string label);
-double CountError(Polynomial &p, Grid &testGrid, double (*f)(double), double leftBorder, double rightBorder);
-double CountError(Spline &spline, Grid &testGrid, double (*f)(double), double leftBorder, double rightBorder);
 
 //Count functions
+double f0(double);
 double f1(double);
 double f2(double);
 double f3(double);
 double f4(double);
 double f5(double);
 double f6(double);
-
+double f7(double);
+double f8(double);
+double f9(double);
 
 int MakeSpline(Grid &grid);
+
+
+
+void LagrangeInterpolate(Grid &initGrid, Grid &lagrange);
+void LagrangeOut(Grid &lagrangeGrid, std::string fileName);
+double CountError(Grid &grid, double (*f)(double));
+double CountError(Spline &spline, double (*f)(double));
