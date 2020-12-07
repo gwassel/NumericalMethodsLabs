@@ -1,0 +1,7 @@
+{
+    "folderInput" : "inputData",
+    "folderOutput" : "outputData",
+    "fileInput" : "inputFile",
+    "fileOutput" : "outputFile",
+    "testSplitCount" : 1024
+}
