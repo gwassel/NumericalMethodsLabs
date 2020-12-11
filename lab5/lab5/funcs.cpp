@@ -69,5 +69,5 @@ double f14(double x)
 
 double f15(double x)
 {
-    return x;
+    return (x-1)*(x-1)*(x-1);
 }

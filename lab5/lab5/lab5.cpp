@@ -19,7 +19,7 @@ int main()
     //Size of table(number of points) == number of sections + 1
     int meshSize2D = 17;
     int meshSize3DX = 100;
-    int meshSize3DY = 1000;
+    int meshSize3DY = 100;
 
     //Mesh
     double* mesh2D;
@@ -53,6 +53,6 @@ int main()
     PrintTable(mesh2D, meshSize2D);
 
     CalculateOneEquation(mesh2D, meshSize2D, leftBorder, rigthBorder, f);
-    NewtonNonlinearSearch(mesh3DX, mesh3DY, meshSize3DX, meshSize3DY, F, dF, inversedF, buf, x0, x1, x2, f11, f12, sizeF);
+    NewtonNonlinearSearch(mesh3DX, mesh3DY, meshSize3DX, meshSize3DY, F, dF, inversedF, buf, x0, x1, x2, f9, f10, sizeF);
     //RelaxationMethod(F,dF,sizeF);
 }

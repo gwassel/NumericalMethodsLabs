@@ -38,11 +38,11 @@ void CalculateOneEquation(double*& table, int& size, double A, double B, double 
         {
         case 0:
             solsB.push_back(table[i]);
-            std::cout << "Found solution " << "[" << table[i] << "," << table[i + 1] << "]" << " " << solsB[solsB.size() - 1] << std::endl;
+            //std::cout << "Found solution " << "[" << table[i] << "," << table[i + 1] << "]" << " " << solsB[solsB.size() - 1] << std::endl;
             break;
         case 1:
             solsB.push_back(BisectionMethod(table[i], table[i + 1], f));
-            std::cout << "Found solution " << "[" << table[i] << "," << table[i + 1] << "]" << " " << solsB[solsB.size() - 1] << std::endl;
+            //std::cout << "Found solution " << "[" << table[i] << "," << table[i + 1] << "]" << " " << solsB[solsB.size() - 1] << std::endl;
             break;
         case 2:
             //std::cout << "No solution " << "[" << table[i] << "," << table[i + 1] << "]" << std::endl;
@@ -66,11 +66,11 @@ void CalculateOneEquation(double*& table, int& size, double A, double B, double 
         {
         case 0:
             solsN.push_back(table[i]);
-            std::cout << "Found solution " << "[" << table[i] << "," << table[i + 1] << "]" << " " << solsN[solsN.size() - 1] << std::endl;
+            //std::cout << "Found solution " << "[" << table[i] << "," << table[i + 1] << "]" << " " << solsN[solsN.size() - 1] << std::endl;
             break;
         case 1:
             solsN.push_back(NewtonOneEquation(table[i], table[i + 1], (table[i] + table[i + 1]) / 2.0, f));
-            std::cout << "Found solution " << "[" << table[i] << "," << table[i + 1] << "]" << " " << solsN[solsN.size() - 1] << std::endl;
+            //std::cout << "Found solution " << "[" << table[i] << "," << table[i + 1] << "]" << " " << solsN[solsN.size() - 1] << std::endl;
             break;
         case 2:
             //std::cout << "No solution " << "[" << table[i] << "," << table[i + 1] << "]" << std::endl;

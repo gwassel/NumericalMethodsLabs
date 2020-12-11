@@ -35,7 +35,7 @@ double ChordMethodIteration(double A, double x, double (*f)(double));
 void NewtonNonlinearSearch(double*& mesh3DX, double*& mesh3DY, int& meshSize3DX, int& meshSize3DY, double*& F,
     double**& dF, double**& u, double*& buf, double*& x0, double*& x1, double*& x2,
     double (*f1)(double, double), double (*f2)(double, double), int size);
-void RelaxationMethod(double*& F, double**& dF, double*& x, int size);
+//void RelaxationMethod(double*& F, double**& dF, double*& x, int size);
 
 //Support functions
 double Derivative(double (*f)(double), double x);

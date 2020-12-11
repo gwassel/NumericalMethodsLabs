@@ -140,14 +140,14 @@ void NewtonNonlinearSearch(double*& mesh3DX, double*& mesh3DY, int& meshSize3DX,
 
     for (int i = 0; i < meshSize3DX; i++) {
         for (int j = 0; j < meshSize3DY - 1; j++) {
-            t = HasSolution3D(mesh3DX[i], mesh3DY[j], mesh3DX[i], mesh3DY[j + 1], f1);
-            switch (t) {
-            case 0:
-                solsNX.push_back(mesh3DX[i]);
-                solsNY.push_back(mesh3DY[j]);
+            //t = HasSolution3D(mesh3DX[i], mesh3DY[j], mesh3DX[i], mesh3DY[j + 1], f1);
+            //switch (t) {
+            //case 0:
+             //   solsNX.push_back(mesh3DX[i]);
+              //  solsNY.push_back(mesh3DY[j]);
                 //std::cout << "Solution 0 in "<< "["<< mesh3DX[j] <<","<< mesh3DY[j]<<"] " << "[" << mesh3DX[j] <<", "<< mesh3DY[j + 1]<<"]"  << std::endl;
-                break;
-            case 1:
+            //    break;
+            //case 1:
                 x0[0] = mesh3DX[i];
                 x0[1] = (mesh3DY[j] + mesh3DY[j + 1]) / 2;
                 iters.push_back(NewtonSystem(F, dF, u, buf, x0, x1, x2, f1, f2, size));
@@ -155,12 +155,12 @@ void NewtonNonlinearSearch(double*& mesh3DX, double*& mesh3DY, int& meshSize3DX,
                 solsNY.push_back(x1[1]);
                 DistributePointsToFiles(fileOutput_1_10, fileOutput_11_20, fileOutput_21_30, fileOutput_31_40, fileOutputNoSol, mesh3DX[i], (mesh3DY[j] + mesh3DY[j + 1]) / 2,iters[iters.size()-1]);
                 //std::cout << "x0 = " << x0[0] << "y0 = " << x0[1] << " Solution " << "x = "<< x1[0]<< " y = "<< x1[1] <<", in " << "[" << mesh3DX[j] << "," << mesh3DY[j] << "] " << "[" << mesh3DX[j] << ", " << mesh3DY[j + 1] << "]" << std::endl;
-                break;
-            case 2:
+             //   break;
+           // case 2:
                 //fileOutputNoSol << mesh3DX[i] << " " << (mesh3DY[j] + mesh3DY[j + 1]) / 2 << "\n";
                 //std::cout << "No solution in " << "[" << mesh3DX[j] << "," << mesh3DY[j] << "] " << "[" << mesh3DX[j] << ", " << mesh3DY[j + 1] << "]" << std::endl;
-                break;
-            }
+             //   break;
+           // }
         }
     }
     
@@ -178,7 +178,7 @@ void NewtonNonlinearSearch(double*& mesh3DX, double*& mesh3DY, int& meshSize3DX,
     fileOutputNoSol.close();
 }
 
-void RelaxationMethod(double*& F, double**& dF, double*& x, int size) {
+/*void RelaxationMethod(double*& F, double**& dF, double*& x, int size) {
     double tau = 0.01;
     double eps = 1e-6;
     double E[2][2]{};
@@ -232,4 +232,4 @@ void RelaxationMethod(double*& F, double**& dF, double*& x, int size) {
 
     x[0] = x1[0];
     x[1] = x1[1];
-}
+}*/
